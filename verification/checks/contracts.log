@@ -1,0 +1,6 @@
+npm notice run visual-coach-monorepo@0.1.0 contracts
+npm notice run uv run python scripts/export_contracts.py && node scripts/generate_contracts_ts.mjs
+/tmp/contest-revision/source/synoptics/packages/visual-tools/src/visual.schema.json (11 definitions)
+/tmp/contest-revision/source/synoptics/web/src/generated/api.schema.json (46 definitions)
+Generated /tmp/contest-revision/source/synoptics/packages/visual-tools/src/visual.generated.ts from /tmp/contest-revision/source/synoptics/packages/visual-tools/src/visual.schema.json
+Generated /tmp/contest-revision/source/synoptics/web/src/generated/api.generated.ts from /tmp/contest-revision/source/synoptics/web/src/generated/api.schema.json

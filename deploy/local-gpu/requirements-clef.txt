@@ -1,0 +1,30 @@
+# Clef decision server runtime (tools/clef_ft/serve_clef.py, tools/clef_ft/merge_ckpt.py).
+# Installed by deploy/local-gpu/setup.sh into <repo>/.venv-clef (Python 3.12). GPU only.
+#
+# torch and torchvision are installed FIRST, from the CUDA 12.8 wheel index, exactly as the fine-tuning
+# script pins them (tools/clef_ft/run_on_instance.sh); a single requirements file cannot mix indexes safely:
+#   torch==2.9.1  torchvision==0.24.1  --index-url https://download.pytorch.org/whl/cu128
+#
+# The versions below are the ones the Clef tools were trained and served with (same pin set as
+# tools/clef_ft/run_on_instance.sh); the web-server/general libraries keep bounded ranges, as in the
+# repository's own pyproject files.
+
+transformers==5.18.0
+huggingface_hub==1.33.0
+tokenizers==0.23.2
+safetensors==0.8.0
+accelerate==1.15.0
+peft==0.21.2
+numpy>=2.1,<3
+pillow>=11,<13
+fastapi>=0.115,<1
+uvicorn>=0.34,<1
+pydantic>=2.10,<3
+hf_xet
+hf_transfer
+
+# Optional, and installed separately by setup.sh only when they build on this machine:
+#   flash-linear-attention==0.5.2   faster gated-delta layers; without it transformers falls back to the
+#                                   pure-torch path (slower, same results).
+# Optional, only for CLEF_QUANT=fp8dyn (float8 weights, ~28.5 GiB instead of ~52 GiB):
+#   torchao==0.14.1

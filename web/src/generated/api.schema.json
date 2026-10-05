@@ -1,0 +1,3102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GuidanceApiContracts",
+  "type": "object",
+  "properties": {
+    "ActionAnchorCommand": {
+      "$ref": "#/$defs/ActionAnchorCommand"
+    },
+    "AnchorEcho": {
+      "$ref": "#/$defs/AnchorEcho"
+    },
+    "AnchorRef": {
+      "$ref": "#/$defs/AnchorRef"
+    },
+    "AnchorVerdict": {
+      "$ref": "#/$defs/AnchorVerdict"
+    },
+    "BuildInfo": {
+      "$ref": "#/$defs/BuildInfo"
+    },
+    "EndSessionResponse": {
+      "$ref": "#/$defs/EndSessionResponse"
+    },
+    "Evidence": {
+      "$ref": "#/$defs/Evidence"
+    },
+    "FocusAnchorCommand": {
+      "$ref": "#/$defs/FocusAnchorCommand"
+    },
+    "GuideConfirmRequest": {
+      "$ref": "#/$defs/GuideConfirmRequest"
+    },
+    "GuideConfirmResponse": {
+      "$ref": "#/$defs/GuideConfirmResponse"
+    },
+    "GuideFence": {
+      "$ref": "#/$defs/GuideFence"
+    },
+    "GuideFollowRequest": {
+      "$ref": "#/$defs/GuideFollowRequest"
+    },
+    "GuideFollowResponse": {
+      "$ref": "#/$defs/GuideFollowResponse"
+    },
+    "GuideHealthResponse": {
+      "$ref": "#/$defs/GuideHealthResponse"
+    },
+    "GuidePlanApproveRequest": {
+      "$ref": "#/$defs/GuidePlanApproveRequest"
+    },
+    "GuidePlanCurrentResponse": {
+      "$ref": "#/$defs/GuidePlanCurrentResponse"
+    },
+    "GuidePlanRequest": {
+      "$ref": "#/$defs/GuidePlanRequest"
+    },
+    "GuidePlanResponse": {
+      "$ref": "#/$defs/GuidePlanResponse"
+    },
+    "GuidePlanRevertRequest": {
+      "$ref": "#/$defs/GuidePlanRevertRequest"
+    },
+    "GuideReplan": {
+      "$ref": "#/$defs/GuideReplan"
+    },
+    "GuideStep": {
+      "$ref": "#/$defs/GuideStep"
+    },
+    "GuideTalkRequest": {
+      "$ref": "#/$defs/GuideTalkRequest"
+    },
+    "GuideTalkResponse": {
+      "$ref": "#/$defs/GuideTalkResponse"
+    },
+    "GuideTalkToolOutput": {
+      "$ref": "#/$defs/GuideTalkToolOutput"
+    },
+    "HealthResponse": {
+      "$ref": "#/$defs/HealthResponse"
+    },
+    "LabelAnchorCommand": {
+      "$ref": "#/$defs/LabelAnchorCommand"
+    },
+    "ManualImportRequest": {
+      "$ref": "#/$defs/ManualImportRequest"
+    },
+    "MaterialInput": {
+      "$ref": "#/$defs/MaterialInput"
+    },
+    "SceneInput": {
+      "$ref": "#/$defs/SceneInput"
+    },
+    "SessionRequest": {
+      "$ref": "#/$defs/SessionRequest"
+    },
+    "SessionResponse": {
+      "$ref": "#/$defs/SessionResponse"
+    },
+    "TrackControlRequest": {
+      "$ref": "#/$defs/TrackControlRequest"
+    },
+    "TrackControlResponse": {
+      "$ref": "#/$defs/TrackControlResponse"
+    },
+    "TrackFrameQuery": {
+      "$ref": "#/$defs/TrackFrameQuery"
+    },
+    "TrackFrameRequest": {
+      "$ref": "#/$defs/TrackFrameRequest"
+    },
+    "TrackFrameResponse": {
+      "$ref": "#/$defs/TrackFrameResponse"
+    },
+    "TrackSelectRequest": {
+      "$ref": "#/$defs/TrackSelectRequest"
+    },
+    "TrackSelectResponse": {
+      "$ref": "#/$defs/TrackSelectResponse"
+    },
+    "Usage": {
+      "$ref": "#/$defs/Usage"
+    },
+    "VisualGoalStatus": {
+      "$ref": "#/$defs/VisualGoalStatus"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ActionAnchorCommand": {
+      "additionalProperties": false,
+      "description": "Action glyph attached to the anchor's live box (drawn by the client). Marks the whole target, not subpart.",
+      "properties": {
+        "kind": {
+          "const": "action",
+          "title": "Kind",
+          "type": "string"
+        },
+        "anchor": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "press",
+            "grasp",
+            "move",
+            "rotate",
+            "open",
+            "close",
+            "insert",
+            "remove",
+            "attach",
+            "fold",
+            "place",
+            "fit",
+            "screw",
+            "hold",
+            "flip",
+            "pull",
+            "push",
+            "align",
+            "connect",
+            "disconnect",
+            "bend"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "up",
+            "down",
+            "left",
+            "right",
+            "clockwise",
+            "counterclockwise",
+            "tighten",
+            "loosen",
+            "none"
+          ],
+          "title": "Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "anchor",
+        "action",
+        "direction"
+      ],
+      "title": "ActionAnchorCommand",
+      "type": "object"
+    },
+    "AnchorEcho": {
+      "additionalProperties": false,
+      "description": "Which anchor identity an answer was computed against (a generation change makes it text-only).",
+      "properties": {
+        "anchor_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "track_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Track Id",
+          "type": "string"
+        },
+        "generation": {
+          "minimum": 0,
+          "title": "Generation",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "anchor_id",
+        "track_id",
+        "generation"
+      ],
+      "title": "AnchorEcho",
+      "type": "object"
+    },
+    "AnchorRef": {
+      "additionalProperties": false,
+      "description": "The client's registry snapshot of one anchor, captured with the request frame. Not server authority.\n\n``box`` is the tracker's box on the SAME capture as ``scene`` and exists iff ``state == \"tracking\"``\n(the tracking contract's own rule). The server draws it on its copy of the frame together with\n``anchor_id`` (Set-of-Mark) so the model can refer to the object by id without ever writing a position.",
+      "properties": {
+        "anchor_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "role": {
+          "const": "target",
+          "title": "Role",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "track_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Track Id",
+          "type": "string"
+        },
+        "generation": {
+          "minimum": 0,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "state": {
+          "enum": [
+            "acquiring",
+            "tracking",
+            "occluded",
+            "lost",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "box": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Box"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "anchor_id",
+        "role",
+        "label",
+        "run_id",
+        "track_id",
+        "generation",
+        "state"
+      ],
+      "title": "AnchorRef",
+      "type": "object"
+    },
+    "AnchorVerdict": {
+      "additionalProperties": false,
+      "description": "Does the box drawn with this id still contain the plan's target object?",
+      "properties": {
+        "anchor_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "matches": {
+          "enum": [
+            "yes",
+            "no",
+            "unsure"
+          ],
+          "title": "Matches",
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchor_id",
+        "matches"
+      ],
+      "title": "AnchorVerdict",
+      "type": "object"
+    },
+    "Box": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Height",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "Box",
+      "type": "object"
+    },
+    "BuildInfo": {
+      "additionalProperties": false,
+      "description": "Which build answers (``backend/app/build.py``): project version, short commit, build time (ISO).",
+      "properties": {
+        "version": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "commit": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Commit",
+          "type": "string"
+        },
+        "built_at": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Built At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "commit",
+        "built_at"
+      ],
+      "title": "BuildInfo",
+      "type": "object"
+    },
+    "EndSessionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "ended": {
+          "title": "Ended",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ended"
+      ],
+      "title": "EndSessionResponse",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "§15.2: which material (and where in it) a step's instruction came from.\n\n``material_id`` names one of the request's ``materials`` (``m1`` .. in request order). The route knows that\nlist and DROPS an evidence it cannot ground — an id not among the materials, a ``version`` that does not\nequal the material's own, a ``quote`` longer than ``EVIDENCE_QUOTE_MAX`` or not a whitespace-normalised\nexcerpt of the material's text, or a field outside its bound (the drop is logged; nothing is invented) — so\nno fabricated or malformed citation ever reaches a client. A quote is never silently cut to fit: an\nover-long quote is ungrounded and dropped, and a kept quote is stored whitespace-folded. A blank optional\nstring is absent.",
+      "properties": {
+        "material_id": {
+          "pattern": "^m(?:[1-9]|1[0-2])$",
+          "title": "Material Id",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "locator": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locator"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        }
+      },
+      "required": [
+        "material_id"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FocusAnchorCommand": {
+      "additionalProperties": false,
+      "description": "Emphasis ring around the anchor's live box; ``pad`` is a fraction of the box, not a position.",
+      "properties": {
+        "kind": {
+          "const": "focus",
+          "title": "Kind",
+          "type": "string"
+        },
+        "anchor": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor",
+          "type": "string"
+        },
+        "pad": {
+          "default": 0.15,
+          "maximum": 0.5,
+          "minimum": 0,
+          "title": "Pad",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "anchor"
+      ],
+      "title": "FocusAnchorCommand",
+      "type": "object"
+    },
+    "GuideConfirmRequest": {
+      "additionalProperties": false,
+      "description": "Ask the large model whether the goal is visibly done (or the plan must change) on a fresh frame.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "consent_ai": {
+          "title": "Consent Ai",
+          "type": "boolean"
+        },
+        "scene": {
+          "$ref": "#/$defs/SceneInput"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "user_goal": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "User Goal",
+          "type": "string"
+        },
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/AnchorRef"
+          },
+          "maxItems": 1,
+          "title": "Anchors",
+          "type": "array"
+        },
+        "trigger": {
+          "enum": [
+            "goal_check",
+            "step_done",
+            "unsure_twice",
+            "replan",
+            "target_left"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "fence": {
+          "$ref": "#/$defs/GuideFence"
+        },
+        "current_step": {
+          "anyOf": [
+            {
+              "pattern": "^s(?:[1-9]|1[0-6])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Step"
+        },
+        "follow_checks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/StepCheck"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Follow Checks"
+        },
+        "before_scene": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SceneInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "exit_edge": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "right",
+                "top",
+                "bottom",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Edge"
+        }
+      },
+      "required": [
+        "session_id",
+        "consent_ai",
+        "scene",
+        "plan_id",
+        "plan_revision",
+        "user_goal",
+        "anchors",
+        "trigger",
+        "intent_seq",
+        "fence"
+      ],
+      "title": "GuideConfirmRequest",
+      "type": "object"
+    },
+    "GuideConfirmResponse": {
+      "additionalProperties": false,
+      "description": "The judge's answer plus the same acceptance envelope as follow.\n\n``plan_revision`` is the revision AFTER this call: bumped when ``replan`` was applied to the stored plan.\n``step_id`` echoes the request's ``current_step`` on a ``step_done`` confirm, the one trigger that\ncarries ``step_check``; both are present together or not at all. Under ``graph`` that is the step the\nupper was asked about — an earlier completed step or a future eligible one — and never a different\n\"suggested focus\": the id is the request's, echoed verbatim.",
+      "properties": {
+        "goal_status": {
+          "$ref": "#/$defs/VisualGoalStatus"
+        },
+        "evidence_kind": {
+          "enum": [
+            "observed_scene",
+            "uncertain_view"
+          ],
+          "title": "Evidence Kind",
+          "type": "string"
+        },
+        "replan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GuideReplan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "needs_clarification": {
+          "title": "Needs Clarification",
+          "type": "boolean"
+        },
+        "clarification_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clarification Prompt"
+        },
+        "step_check": {
+          "anyOf": [
+            {
+              "enum": [
+                "yes",
+                "no",
+                "unsure"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Check"
+        },
+        "inferred_done": {
+          "anyOf": [
+            {
+              "enum": [
+                "yes",
+                "no",
+                "unsure"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inferred Done"
+        },
+        "step_checks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/StepCheck"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Checks"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "pattern": "^s(?:[1-9]|1[0-6])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Id"
+        },
+        "intent_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Intent Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "trigger": {
+          "enum": [
+            "goal_check",
+            "step_done",
+            "unsure_twice",
+            "replan",
+            "target_left"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "task_revision": {
+          "minimum": 0,
+          "title": "Task Revision",
+          "type": "integer"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "fence_echo": {
+          "$ref": "#/$defs/GuideFence"
+        },
+        "anchors_echo": {
+          "items": {
+            "$ref": "#/$defs/AnchorEcho"
+          },
+          "maxItems": 1,
+          "title": "Anchors Echo",
+          "type": "array"
+        },
+        "provider": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "goal_status",
+        "evidence_kind",
+        "needs_clarification",
+        "intent_id",
+        "frame_id",
+        "intent_seq",
+        "trigger",
+        "task_revision",
+        "plan_revision",
+        "fence_echo",
+        "anchors_echo",
+        "provider",
+        "latency_ms"
+      ],
+      "title": "GuideConfirmResponse",
+      "type": "object"
+    },
+    "GuideFence": {
+      "additionalProperties": false,
+      "description": "The client's own fence for one intent call, echoed back verbatim so a late answer is recognisable.",
+      "properties": {
+        "task_epoch": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Task Epoch",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_epoch",
+        "run_id"
+      ],
+      "title": "GuideFence",
+      "type": "object"
+    },
+    "GuideFollowRequest": {
+      "additionalProperties": false,
+      "description": "One follow judgement about the frame captured right now, against the current plan revision.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "consent_ai": {
+          "title": "Consent Ai",
+          "type": "boolean"
+        },
+        "scene": {
+          "$ref": "#/$defs/SceneInput"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "current_step": {
+          "pattern": "^s(?:[1-9]|1[0-6])$",
+          "title": "Current Step",
+          "type": "string"
+        },
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/AnchorRef"
+          },
+          "maxItems": 1,
+          "title": "Anchors",
+          "type": "array"
+        },
+        "trigger": {
+          "enum": [
+            "acquired",
+            "target_moved",
+            "target_changed",
+            "anchor_lost",
+            "manual",
+            "heartbeat"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "fence": {
+          "$ref": "#/$defs/GuideFence"
+        }
+      },
+      "required": [
+        "session_id",
+        "consent_ai",
+        "scene",
+        "plan_id",
+        "plan_revision",
+        "current_step",
+        "anchors",
+        "trigger",
+        "intent_seq",
+        "fence"
+      ],
+      "title": "GuideFollowRequest",
+      "type": "object"
+    },
+    "GuideFollowResponse": {
+      "additionalProperties": false,
+      "description": "The follower's answer plus everything the client needs to accept it as bound, text-only or stale.\n\n``needs_reselect`` is ``True`` exactly when some verdict is ``\"no\"``. This response has no\n``goal_status`` field at all: completion is never decided on this route.",
+      "properties": {
+        "step_checks": {
+          "items": {
+            "$ref": "#/$defs/StepCheck"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Step Checks",
+          "type": "array"
+        },
+        "anchor_verdicts": {
+          "items": {
+            "$ref": "#/$defs/AnchorVerdict"
+          },
+          "maxItems": 1,
+          "title": "Anchor Verdicts",
+          "type": "array"
+        },
+        "goal_seen": {
+          "enum": [
+            "yes",
+            "no",
+            "unsure"
+          ],
+          "title": "Goal Seen",
+          "type": "string"
+        },
+        "intent_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Intent Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "trigger": {
+          "enum": [
+            "acquired",
+            "target_moved",
+            "target_changed",
+            "anchor_lost",
+            "manual",
+            "heartbeat"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "task_revision": {
+          "minimum": 0,
+          "title": "Task Revision",
+          "type": "integer"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "fence_echo": {
+          "$ref": "#/$defs/GuideFence"
+        },
+        "anchors_echo": {
+          "items": {
+            "$ref": "#/$defs/AnchorEcho"
+          },
+          "maxItems": 1,
+          "title": "Anchors Echo",
+          "type": "array"
+        },
+        "provider": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "needs_reselect": {
+          "title": "Needs Reselect",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "step_checks",
+        "anchor_verdicts",
+        "goal_seen",
+        "intent_id",
+        "frame_id",
+        "intent_seq",
+        "trigger",
+        "task_revision",
+        "plan_revision",
+        "fence_echo",
+        "anchors_echo",
+        "provider",
+        "latency_ms",
+        "needs_reselect"
+      ],
+      "title": "GuideFollowResponse",
+      "type": "object"
+    },
+    "GuideHealthResponse": {
+      "additionalProperties": false,
+      "description": "``/api/health`` with the guide lane's readiness, each reported independently.\n\n* ``guide_ready`` — the BASIC guide lane can run: the configured provider is DeepSeek and has a key. This\n  is exactly the ``deepseek:high`` profile's capability. Global readiness is unchanged by the OpenAI lane:\n  it never requires an OpenAI key.\n* ``plan_models`` — per-choice configured capability, ``{'deepseek:high': bool, 'astra:high': bool}``. A\n  ``True`` means that profile's credential is configured; it does NOT prove the key's model entitlement or\n  remaining credit. The two entries are independent.\n* ``plan_ready`` — aggregate any-ready: at least one ``plan_models`` entry is ``True``. A session may be\n  opened on it alone.\n* ``follow_provider`` — ``AISW_FOLLOW_PROVIDER`` (``None`` when it names no known follower).\n* ``follow_ready`` — the follower can run: the local or Clef endpoint answers its health probe (cached\n  2 s), or, for ``deepseek``, the same condition as ``guide_ready``.",
+      "properties": {
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "default": "gemini",
+          "title": "Provider",
+          "type": "string"
+        },
+        "access_code_required": {
+          "title": "Access Code Required",
+          "type": "boolean"
+        },
+        "access_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "code",
+                "local",
+                "open"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Mode"
+        },
+        "tracker_ready": {
+          "default": false,
+          "title": "Tracker Ready",
+          "type": "boolean"
+        },
+        "guide_ready": {
+          "default": false,
+          "title": "Guide Ready",
+          "type": "boolean"
+        },
+        "plan_ready": {
+          "default": false,
+          "title": "Plan Ready",
+          "type": "boolean"
+        },
+        "plan_models": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "propertyNames": {
+            "enum": [
+              "deepseek:high",
+              "astra:high"
+            ]
+          },
+          "title": "Plan Models",
+          "type": "object"
+        },
+        "follow_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "clef",
+                "deepseek"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Follow Provider"
+        },
+        "follow_ready": {
+          "default": false,
+          "title": "Follow Ready",
+          "type": "boolean"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BuildInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "ready",
+        "model",
+        "access_code_required"
+      ],
+      "title": "GuideHealthResponse",
+      "type": "object"
+    },
+    "GuidePlanApproveRequest": {
+      "additionalProperties": false,
+      "description": "``POST /api/guide/plan/approve``: the client-reviewed plan becomes the session's authoritative plan.\n\nThe client holds a plan it may have edited (changed a sentence or the order, added or removed a step);\napproving it pins execution to exactly those steps, so a later fence names the adopted pair, not the plan\nthe model wrote. ``plan_id``/``plan_revision`` must name the session's CURRENT plan, else ``409 stale_plan``\nwith the usual body. No provider is called, no frame is read and no consent is asked: nothing here reaches a\nmodel.\n\n``steps`` (1-``MAX_STEPS``) are re-validated exactly like a model answer's: the §15 requires graph (unique\nids, resolvable and acyclic ``requires``) is fail-closed as ``422 invalid_request``. ``user_goal``/``context``\nkeep the adopted plan's own values when absent, so a client that only edits steps need not resend them.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/GuideStep"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "goal_when": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Goal When",
+          "type": "string"
+        },
+        "user_goal": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Goal"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        }
+      },
+      "required": [
+        "session_id",
+        "plan_id",
+        "plan_revision",
+        "steps",
+        "goal_when"
+      ],
+      "title": "GuidePlanApproveRequest",
+      "type": "object"
+    },
+    "GuidePlanCurrentResponse": {
+      "additionalProperties": false,
+      "description": "``GET /api/guide/plan/current``: the session's current plan as stored (text only), no provider call.\n\nThe recovery read after a ``409 stale_plan`` (for example a streamed plan whose client disconnected, or a\nreplan applied by a confirm the client did not see): the client continues from exactly this\n``plan_id``/``plan_revision``. ``task_revision`` is the task the plan was made for (always the session's\ncurrent one: a task change clears the plan). ``steps`` may be empty only for a plan that selected no\ntarget or asked for clarification, as on ``POST /api/guide/plan``. ``core_mode`` is the guide core the\nplan was built for (fixed for its task), so a recovering client knows which follow semantics apply.",
+      "properties": {
+        "plan_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "core_mode": {
+          "default": "classic",
+          "enum": [
+            "classic",
+            "sequential",
+            "graph"
+          ],
+          "title": "Core Mode",
+          "type": "string"
+        },
+        "task_revision": {
+          "minimum": 0,
+          "title": "Task Revision",
+          "type": "integer"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/GuideStep"
+          },
+          "maxItems": 16,
+          "title": "Steps",
+          "type": "array"
+        },
+        "goal_when": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Goal When",
+          "type": "string"
+        },
+        "user_goal": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "User Goal",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "plan_revision",
+        "task_revision",
+        "steps",
+        "goal_when",
+        "user_goal"
+      ],
+      "title": "GuidePlanCurrentResponse",
+      "type": "object"
+    },
+    "GuidePlanRequest": {
+      "additionalProperties": false,
+      "description": "Start a guide: the task text and the frame captured right now. A new plan replaces the old one.\n\n``materials`` are reference documents: each is rendered into a prompt as a labelled block (``m1`` .. in\nrequest order) that a step's ``evidence.material_id`` may cite. They join the session's task identity (a\nchanged list under the same goal/context is a new task) and are kept with the plan for its task, so a\nconfirm/talk replan stays grounded in the same source; they are never echoed by ``/plan/current`` and never\nlogged.\n\n``plan_model`` (one of ``deepseek:high`` / ``astra:high``, default ``deepseek:high``) selects which upper\nplanning profile writes the plan: the basic DeepSeek provider at HIGH, or the OpenAI Responses adapter at\nHIGH. The two profiles share one intent contract, one reasoning+output cap and one deadline; only the\nissuer adapter differs, and a missing credential is a clean refusal — never a fallback to the other lane.\nThe choice joins the session's task identity too — changing it under the same goal/context is a new task,\nso a plan made for one choice can never be inherited or revised by the other. There is no alias for it and\nno legacy ``plan_mode``/``mode``/``manual`` field (any of those is an unknown field and refused). Once a\nplan is accepted, confirm/talk route from that plan's own stored ``plan_model``, never from the client.\n\n``core_mode`` (``classic`` by default, ``sequential`` or ``graph``) selects the guide core: how the follower\nis asked and how the client may move the screen. ``classic`` is the whole-plan checklist (a follow answer\ncovers every step from the current one to the last). ``sequential`` scopes every follower answer to the\nCURRENT step, so a later step's verdict can never move the screen. ``graph`` asks about EVERY step of the\nplan, earlier and already-completed ones included, and treats the client's suggested focus as a hint only: a\nstep is committed by the upper's own ``step_done`` verdict, and an explicit ``condition_kind`` says whether\na step's claim can be revoked (``state``) or is a historical occurrence (``event``). All cores share one\nfollower model, mode and threshold; only the question set differs. The choice joins the session's task\nidentity too — changing it under the same goal/context is a new task, so a plan made for one core can never\nbe inherited, revised or reverted back into by the other. There is no alias for it. It is independent of\n``plan_model`` (which upper profile writes the plan) and of any review flag the client applies.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "consent_ai": {
+          "title": "Consent Ai",
+          "type": "boolean"
+        },
+        "scene": {
+          "$ref": "#/$defs/SceneInput"
+        },
+        "user_goal": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "User Goal",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "materials": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MaterialInput"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Materials"
+        },
+        "plan_model": {
+          "default": "deepseek:high",
+          "enum": [
+            "deepseek:high",
+            "astra:high"
+          ],
+          "title": "Plan Model",
+          "type": "string"
+        },
+        "core_mode": {
+          "default": "classic",
+          "enum": [
+            "classic",
+            "sequential",
+            "graph"
+          ],
+          "title": "Core Mode",
+          "type": "string"
+        },
+        "assisted": {
+          "default": false,
+          "title": "Assisted",
+          "type": "boolean"
+        },
+        "research": {
+          "default": false,
+          "title": "Research",
+          "type": "boolean"
+        },
+        "answers": {
+          "items": {
+            "$ref": "#/$defs/PlanAnswer"
+          },
+          "maxItems": 12,
+          "title": "Answers",
+          "type": "array"
+        },
+        "reference_images": {
+          "items": {
+            "$ref": "#/$defs/SceneInput"
+          },
+          "maxItems": 12,
+          "title": "Reference Images",
+          "type": "array"
+        }
+      },
+      "required": [
+        "session_id",
+        "consent_ai",
+        "scene",
+        "user_goal"
+      ],
+      "title": "GuidePlanRequest",
+      "type": "object"
+    },
+    "GuidePlanResponse": {
+      "additionalProperties": false,
+      "description": "The plan plus its server identity. ``plan_revision`` is per session and never goes backwards.\n\n``core_mode`` echoes the guide core the plan was built for; it is fixed for the plan's whole task, so a\nclient never has to guess which follow semantics apply.",
+      "properties": {
+        "selection": {
+          "$ref": "#/$defs/TargetSelectionToolOutput"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/GuideStep"
+          },
+          "maxItems": 16,
+          "title": "Steps",
+          "type": "array"
+        },
+        "goal_when": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Goal When",
+          "type": "string"
+        },
+        "evidence_kind": {
+          "enum": [
+            "observed_scene",
+            "uncertain_view"
+          ],
+          "title": "Evidence Kind",
+          "type": "string"
+        },
+        "needs_clarification": {
+          "title": "Needs Clarification",
+          "type": "boolean"
+        },
+        "clarification_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clarification Prompt"
+        },
+        "research_sources": {
+          "items": {
+            "$ref": "#/$defs/ResearchSource"
+          },
+          "maxItems": 6,
+          "title": "Research Sources",
+          "type": "array"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "core_mode": {
+          "default": "classic",
+          "enum": [
+            "classic",
+            "sequential",
+            "graph"
+          ],
+          "title": "Core Mode",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "selection",
+        "steps",
+        "goal_when",
+        "evidence_kind",
+        "needs_clarification",
+        "plan_id",
+        "plan_revision",
+        "frame_id",
+        "provider"
+      ],
+      "title": "GuidePlanResponse",
+      "type": "object"
+    },
+    "GuidePlanRevertRequest": {
+      "additionalProperties": false,
+      "description": "``POST /api/guide/plan/revert``: undo the last plan change (an approve, a replan or a new plan).\n\n``plan_id``/``plan_revision`` must name the session's CURRENT plan, else ``409 stale_plan``. On success the\nsession's most recent previous plan (bounded history; see ``guide.GuideSessionState``) becomes current again\nunder the NEXT ``plan_revision``, so every fence keeps moving forward. An empty history is ``404 no_plan``.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "plan_id",
+        "plan_revision"
+      ],
+      "title": "GuidePlanRevertRequest",
+      "type": "object"
+    },
+    "GuideReplan": {
+      "additionalProperties": false,
+      "description": "Replacement steps for the current plan (same step shape, role-anchored commands only).",
+      "properties": {
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/GuideStep"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "title": "GuideReplan",
+      "type": "object"
+    },
+    "GuideStep": {
+      "additionalProperties": false,
+      "description": "One plan step: what the screen says, what to draw on the target, and the visible end condition.\n\nCommands refer to the role ``\"target\"`` only. The step is plain text plus that role reference, which is\nwhy the server can keep a plan in the session without keeping an image or a coordinate.\n\nA plan (or a confirm replan) is written before any anchor id exists, so ``\"target\"`` is the only thing a\nstep command can refer to: whatever ``anchor`` value the model wrote (DeepSeek wrote ``\"a1\"`` on 3/3\nincrease_temp plans, 2026-10-01) is rewritten to the role BEFORE validation instead of failing the whole\nplan. Nothing else in the command is touched, and a command without an ``anchor`` is still refused. The\nfollow/confirm request anchors (``AnchorRef``) are a different model and are validated as before.\n\nThe optional §15 review fields are defaulted, so a caller that does not use them is unchanged:\n\n* ``condition_kind`` is what ``done_when`` describes — ``state`` (default) while it holds, ``event`` once\n  verified. Metadata for the client's graph state; it changes nothing about what the follower looks at.\n* ``check`` is what decides the step is finished (``visual`` on the frame; ``user``/``measure`` only when\n  the user says so — a check the camera cannot make).\n* ``required`` marks a mandatory inspection point that must never be skipped.\n* ``goal_required`` says whose condition this is: the USER'S GOAL (the default) or only safety,\n  preparation, teardown or optional support around it. It is orthogonal to ``required``: a safety\n  precondition such as unplugging the power before touching the wiring is ``goal_required=False`` WITH\n  ``required=True`` (the user must still confirm it, but its state is not evidence the goal was reached),\n  an optional supporting step is ``goal_required=False, required=False``, and only ``goal_required=True``\n  steps are goal evidence — so the client never counts a procedure step toward goal completion and never\n  revokes a completed goal when a precondition later stops holding.\n* ``requires`` names steps of the SAME plan that must be finished before this one is reachable; the plan\n  graph (unique ids, resolvable ``requires``, no self-reference, no cycle) is checked plan-wide.\n* ``targets`` are the step's logical subjects (parts, boxes, tools) — labels, never coordinates.\n* ``evidence`` cites the material the instruction came from, when the request supplied materials.",
+      "properties": {
+        "id": {
+          "pattern": "^s(?:[1-9]|1[0-6])$",
+          "title": "Id",
+          "type": "string"
+        },
+        "say": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Say",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "commands": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/FocusAnchorCommand"
+              },
+              {
+                "$ref": "#/$defs/LabelAnchorCommand"
+              },
+              {
+                "$ref": "#/$defs/ActionAnchorCommand"
+              }
+            ]
+          },
+          "maxItems": 2,
+          "title": "Commands",
+          "type": "array"
+        },
+        "done_when": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Done When",
+          "type": "string"
+        },
+        "condition_kind": {
+          "default": "state",
+          "enum": [
+            "state",
+            "event"
+          ],
+          "title": "Condition Kind",
+          "type": "string"
+        },
+        "check": {
+          "default": "visual",
+          "enum": [
+            "visual",
+            "user",
+            "measure"
+          ],
+          "title": "Check",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "goal_required": {
+          "default": true,
+          "title": "Goal Required",
+          "type": "boolean"
+        },
+        "requires": {
+          "items": {
+            "pattern": "^s(?:[1-9]|1[0-6])$",
+            "type": "string"
+          },
+          "maxItems": 15,
+          "title": "Requires",
+          "type": "array"
+        },
+        "targets": {
+          "items": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Targets",
+          "type": "array"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "say",
+        "commands",
+        "done_when"
+      ],
+      "title": "GuideStep",
+      "type": "object"
+    },
+    "GuideTalkRequest": {
+      "additionalProperties": false,
+      "description": "What the user just said during a guide, with the frame captured right now.\n\n``prev_utterance``/``prev_reply`` are the previous exchange (both or neither): the server keeps no\nconversation. ``follow_checks`` is the client's last accepted follow checklist, prompt context only; every\nid must be a step of the current plan, or ``422 unknown_step`` (checked by the route, like confirm).\n``replan_allowed`` is ``False`` once the client's run has spent its replans: the tool is then offered without\n``replan`` and a replan in the answer is a schema violation.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "consent_ai": {
+          "title": "Consent Ai",
+          "type": "boolean"
+        },
+        "scene": {
+          "$ref": "#/$defs/SceneInput"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "current_step": {
+          "pattern": "^s(?:[1-9]|1[0-6])$",
+          "title": "Current Step",
+          "type": "string"
+        },
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/AnchorRef"
+          },
+          "maxItems": 1,
+          "title": "Anchors",
+          "type": "array"
+        },
+        "utterance": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Utterance",
+          "type": "string"
+        },
+        "prev_utterance": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prev Utterance"
+        },
+        "prev_reply": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prev Reply"
+        },
+        "follow_checks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/StepCheck"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Follow Checks"
+        },
+        "replan_allowed": {
+          "default": true,
+          "title": "Replan Allowed",
+          "type": "boolean"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "fence": {
+          "$ref": "#/$defs/GuideFence"
+        }
+      },
+      "required": [
+        "session_id",
+        "consent_ai",
+        "scene",
+        "plan_id",
+        "plan_revision",
+        "current_step",
+        "anchors",
+        "utterance",
+        "intent_seq",
+        "fence"
+      ],
+      "title": "GuideTalkRequest",
+      "type": "object"
+    },
+    "GuideTalkResponse": {
+      "additionalProperties": false,
+      "description": "The talk answer plus the same acceptance envelope as confirm (there is no trigger).\n\n``plan_revision`` is the revision AFTER this call: bumped when ``step_say`` (``guide.restate``) or\n``replan`` (``guide.replan``) was applied to the stored plan, unchanged for every other action, because\nthe step position (``step_mark``/``go_to``) and the tracker (``target``) belong to the client.",
+      "properties": {
+        "user_says_done": {
+          "title": "User Says Done",
+          "type": "boolean"
+        },
+        "reply": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Reply",
+          "type": "string"
+        },
+        "spoken": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Spoken",
+          "type": "string"
+        },
+        "step_say": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Say"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9 '-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "step_mark": {
+          "anyOf": [
+            {
+              "enum": [
+                "done",
+                "skipped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Mark"
+        },
+        "go_to": {
+          "anyOf": [
+            {
+              "pattern": "^s(?:[1-9]|1[0-6])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Go To"
+        },
+        "replan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GuideReplan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "intent_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Intent Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "intent_seq": {
+          "minimum": 0,
+          "title": "Intent Seq",
+          "type": "integer"
+        },
+        "task_revision": {
+          "minimum": 0,
+          "title": "Task Revision",
+          "type": "integer"
+        },
+        "plan_revision": {
+          "minimum": 0,
+          "title": "Plan Revision",
+          "type": "integer"
+        },
+        "fence_echo": {
+          "$ref": "#/$defs/GuideFence"
+        },
+        "anchors_echo": {
+          "items": {
+            "$ref": "#/$defs/AnchorEcho"
+          },
+          "maxItems": 1,
+          "title": "Anchors Echo",
+          "type": "array"
+        },
+        "provider": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_says_done",
+        "reply",
+        "spoken",
+        "intent_id",
+        "frame_id",
+        "intent_seq",
+        "task_revision",
+        "plan_revision",
+        "fence_echo",
+        "anchors_echo",
+        "provider",
+        "latency_ms"
+      ],
+      "title": "GuideTalkResponse",
+      "type": "object"
+    },
+    "GuideTalkToolOutput": {
+      "additionalProperties": false,
+      "description": "The guide's answer to the user's words: a short Korean ``reply`` and at most ONE action.\n\n* ``step_say`` — the current step's sentence, rewritten (the plan ``say`` bound).\n* ``target`` — a more specific detector noun; the client restarts tracking with it (no paid call).\n* ``step_mark`` — the user says the current step is done (``done``) or wants it skipped (``skipped``).\n* ``go_to`` — an EARLIER step to return to; the route refuses the current or a later one.\n* ``replan`` — replacement steps, the same shape as a confirm replan.\n\n``spoken`` is the one short sentence the voice reads (the screen shows ``reply``); a missing or blank one is the\nreply's first sentence.\n\n``user_says_done`` is a classification of the user's WORDS alone (not of the image): do they say the current\nstep is already done, or that they want to move on? When it is true the user's word is the answer (design\nguide-talk §2, \"사용자 확인\"): the action becomes ``step_mark`` — ``done``, or ``skipped`` if the model said\nso — and every other action is dropped, so a model that judged the image otherwise cannot refuse it\n(glass e2e 2026-10-02: \"이미 했어\" was argued with 2/2 when ``step_mark`` was the model's own choice).\n\nActions combine: at most one of ``TALK_STATE_ACTIONS`` (the first in precedence), plus ``target`` and\n``step_say`` (a ``replan`` drops ``step_say``). Whatever had to go is named in ``dropped_actions`` (the route\nlogs it); ``actions`` lists what was kept. Over-long ``reply``/``step_say`` are cut\n(``_clip``) as plan text is. A blank reply or a target outside ``TalkTarget`` is a schema violation.",
+      "properties": {
+        "user_says_done": {
+          "title": "User Says Done",
+          "type": "boolean"
+        },
+        "reply": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Reply",
+          "type": "string"
+        },
+        "spoken": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Spoken",
+          "type": "string"
+        },
+        "step_say": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Say"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9 '-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "step_mark": {
+          "anyOf": [
+            {
+              "enum": [
+                "done",
+                "skipped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Mark"
+        },
+        "go_to": {
+          "anyOf": [
+            {
+              "pattern": "^s(?:[1-9]|1[0-6])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Go To"
+        },
+        "replan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GuideReplan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "user_says_done",
+        "reply",
+        "spoken"
+      ],
+      "title": "GuideTalkToolOutput",
+      "type": "object"
+    },
+    "HealthResponse": {
+      "additionalProperties": false,
+      "description": "Readiness probe.\n\n``access_code_required`` reports the deployment's session authentication mode, never the\ncalling browser's identity: it is ``False`` only for an explicit local-only deployment\n(``AISW_LOCAL_ONLY=1``, loopback peer + loopback authority) or an explicit open-access deployment\n(``AISW_OPEN_ACCESS=1``), where the UI must not ask for a code at all. The client is not allowed\nto infer this from its own hostname.\n\n``access_mode`` names that mode (``code`` / ``local`` / ``open``). It is ``None`` only for the\nrefused configuration (both ``AISW_OPEN_ACCESS`` and ``AISW_LOCAL_ONLY`` set), where ``ready`` is\nfalse, ``access_code_required`` is true and every session route answers ``503``.\n\n``tracker_ready`` reports the standalone object tracker independently of the paid provider:\neither readiness may be true without the other, and neither is derived from the other.",
+      "properties": {
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "default": "gemini",
+          "title": "Provider",
+          "type": "string"
+        },
+        "access_code_required": {
+          "title": "Access Code Required",
+          "type": "boolean"
+        },
+        "access_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "code",
+                "local",
+                "open"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Mode"
+        },
+        "tracker_ready": {
+          "default": false,
+          "title": "Tracker Ready",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ready",
+        "model",
+        "access_code_required"
+      ],
+      "title": "HealthResponse",
+      "type": "object"
+    },
+    "LabelAnchorCommand": {
+      "additionalProperties": false,
+      "description": "A short callout attached above the anchor's live box (screen-space offset, drawn by the client).",
+      "properties": {
+        "kind": {
+          "const": "label",
+          "title": "Kind",
+          "type": "string"
+        },
+        "anchor": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Anchor",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "anchor",
+        "text"
+      ],
+      "title": "LabelAnchorCommand",
+      "type": "object"
+    },
+    "ManualImportRequest": {
+      "additionalProperties": false,
+      "description": "One local import: the current app session and the raw file bytes, base64-encoded.\n\n``content_base64`` may be a data URL (``data:...;base64,``), which the client's ``FileReader`` produces.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "filename": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Filename",
+          "type": "string"
+        },
+        "content_base64": {
+          "maxLength": 7340032,
+          "minLength": 1,
+          "title": "Content Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "filename",
+        "content_base64"
+      ],
+      "title": "ManualImportRequest",
+      "type": "object"
+    },
+    "MaterialInput": {
+      "additionalProperties": false,
+      "description": "§15.3: one reference document a plan may cite.\n\n``text`` is the extracted plain text; it is rendered into a prompt as a labelled block (``m1``, ``m2``, ...\nin request order) that a step's ``evidence.material_id`` can point at. A plan keeps the materials it was\nmade with for the life of its task (so a confirm/talk replan stays grounded in the same source) but they are\nnever echoed by ``/plan/current`` and never written to a log.",
+      "properties": {
+        "title": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "text": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "text"
+      ],
+      "title": "MaterialInput",
+      "type": "object"
+    },
+    "PlanAnswer": {
+      "additionalProperties": false,
+      "description": "One answered clarification, retained as user evidence without replacing the goal.",
+      "properties": {
+        "question": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "answer": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Answer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question",
+        "answer"
+      ],
+      "title": "PlanAnswer",
+      "type": "object"
+    },
+    "ResearchSource": {
+      "additionalProperties": false,
+      "description": "A public source actually returned by a research tool, not an invented citation.",
+      "properties": {
+        "url": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 1200,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "title",
+        "summary"
+      ],
+      "title": "ResearchSource",
+      "type": "object"
+    },
+    "SceneInput": {
+      "additionalProperties": false,
+      "description": "The single current frame the advice is drawn against.",
+      "properties": {
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "image_base64": {
+          "maxLength": 2500000,
+          "minLength": 1,
+          "title": "Image Base64",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "frame_id",
+        "image_base64"
+      ],
+      "title": "SceneInput",
+      "type": "object"
+    },
+    "SessionRequest": {
+      "additionalProperties": false,
+      "description": "Session request.\n\n``access_code`` is optional on the wire. An explicit local-only or open-access deployment issues\nsessions without a code (any supplied value is ignored), so the browser omits the field entirely;\nevery other deployment requires the configured ``DEMO_ACCESS_CODE`` and rejects a missing, empty,\nor wrong value.",
+      "properties": {
+        "access_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Code"
+        }
+      },
+      "title": "SessionRequest",
+      "type": "object"
+    },
+    "SessionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "SessionResponse",
+      "type": "object"
+    },
+    "StepCheck": {
+      "additionalProperties": false,
+      "description": "Is this step's ``done_when`` (a visible result state) visible in the frame right now?\n\nA state observation only: it says nothing about order, about the action, or about which step is current.\n``unsure`` when the thing ``done_when`` talks about is out of view, covered or blurred: absence is\nneither ``yes`` nor ``no``.",
+      "properties": {
+        "step_id": {
+          "pattern": "^s(?:[1-9]|1[0-6])$",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "visible": {
+          "enum": [
+            "yes",
+            "no",
+            "unsure"
+          ],
+          "title": "Visible",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "visible"
+      ],
+      "title": "StepCheck",
+      "type": "object"
+    },
+    "TargetSelectionStatus": {
+      "enum": [
+        "selected",
+        "no_target",
+        "uncertain"
+      ],
+      "type": "string"
+    },
+    "TargetSelectionToolOutput": {
+      "additionalProperties": false,
+      "description": "The provider's structured answer for one startup target-selection call.\n\n``status`` is the honest closed set: ``selected`` names one object, ``no_target`` says the scene holds\nno plausible object to track, ``uncertain`` says the frame cannot support the decision (blurred,\noccluded, ambiguous). The latter two never carry a target, and they must say why.\n\n``target`` is what the tracker's detector will be prompted with, so it is a short **English** noun\n(``laptop``, ``screwdriver``) rather than a translated or descriptive phrase; ``rationale`` is the\nhuman-facing Korean sentence. The two are never mixed, and no translation step sits between them.",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/TargetSelectionStatus"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "TargetSelectionToolOutput",
+      "type": "object"
+    },
+    "TrackControlRequest": {
+      "additionalProperties": false,
+      "description": "Start or stop a tracking run.\n\n``action=\"start\"`` requires ``start_seq`` (strictly increasing per application session) and a\nnon-blank ``target``. ``action=\"stop\"`` names the ``run_id`` it intends to stop and carries neither.\nImage/frame/seed fields are never accepted here.\n\n``target`` stays optional on the wire only so a stop can omit it: the application refuses a start\nwith an absent or blank target (``422 target_required``) rather than substituting a default class\nname. The client supplies the text — the object the startup analysis selected, or the user's own\nwords for a box they drew (see ``MANUAL_TARGET``).",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "start",
+            "stop"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "start_seq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Seq"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        }
+      },
+      "required": [
+        "session_id",
+        "run_id",
+        "action"
+      ],
+      "title": "TrackControlRequest",
+      "type": "object"
+    },
+    "TrackControlResponse": {
+      "additionalProperties": false,
+      "description": "Control acknowledgement: no frame, no box, no fabricated result.",
+      "properties": {
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "target": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "active",
+        "target"
+      ],
+      "title": "TrackControlResponse",
+      "type": "object"
+    },
+    "TrackFrameQuery": {
+      "additionalProperties": false,
+      "description": "The same frame as ``TrackFrameRequest``, uploaded as raw JPEG bytes instead of JSON + base64.\n\n``POST /api/track/frame`` with ``Content-Type: image/jpeg``: the body is the JPEG itself and these\nfields are the query string. It carries no ``seed_box`` -- a run's seeded first frame is always sent as\nJSON. A server that predates this form answers ``415 json_required``, which a client takes as \"send JSON\".",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "frame_seq": {
+          "minimum": 0,
+          "title": "Frame Seq",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "run_id",
+        "frame_id",
+        "frame_seq"
+      ],
+      "title": "TrackFrameQuery",
+      "type": "object"
+    },
+    "TrackFrameRequest": {
+      "additionalProperties": false,
+      "description": "One captured frame of the active run.\n\n``seed_box`` is the user's manual selection on that captured image (normalised 0..1 in the uploaded\nimage) and is accepted on the **first frame of the run only**; the frame still receives an ordinary\nframe response.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "frame_seq": {
+          "minimum": 0,
+          "title": "Frame Seq",
+          "type": "integer"
+        },
+        "image_base64": {
+          "maxLength": 2500000,
+          "minLength": 1,
+          "title": "Image Base64",
+          "type": "string"
+        },
+        "seed_box": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Box"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "session_id",
+        "run_id",
+        "frame_id",
+        "frame_seq",
+        "image_base64"
+      ],
+      "title": "TrackFrameRequest",
+      "type": "object"
+    },
+    "TrackFrameResponse": {
+      "additionalProperties": false,
+      "description": "Track state for exactly the frame named by ``frame_id``/``frame_seq``.",
+      "properties": {
+        "run_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        },
+        "track_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Track Id",
+          "type": "string"
+        },
+        "generation": {
+          "minimum": 0,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "state": {
+          "enum": [
+            "acquiring",
+            "tracking",
+            "occluded",
+            "lost",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "transition": {
+          "enum": [
+            "none",
+            "acquired",
+            "tracking",
+            "occluded",
+            "lost",
+            "reacquired",
+            "ambiguous"
+          ],
+          "title": "Transition",
+          "type": "string"
+        },
+        "box": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Box"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "grounder",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "frame_seq": {
+          "minimum": 0,
+          "title": "Frame Seq",
+          "type": "integer"
+        },
+        "version": {
+          "minimum": 0,
+          "title": "Version",
+          "type": "integer"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "ingest_age_ms": {
+          "minimum": 0,
+          "title": "Ingest Age Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id",
+        "target",
+        "track_id",
+        "generation",
+        "state",
+        "transition",
+        "frame_id",
+        "frame_seq",
+        "version",
+        "ingest_age_ms"
+      ],
+      "title": "TrackFrameResponse",
+      "type": "object"
+    },
+    "TrackSelectRequest": {
+      "additionalProperties": false,
+      "description": "One startup analysis: choose what the tracker should track, from the frame captured right now.\n\n``scene.frame_id`` is the frame this analysis is about, and the client reuses that exact frame as the\ntracking run's first frame. ``user_goal``/``context`` are the task text the user is working under, so\nthe choice is about *their* object rather than the most salient thing in the image.",
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "consent_ai": {
+          "title": "Consent Ai",
+          "type": "boolean"
+        },
+        "scene": {
+          "$ref": "#/$defs/SceneInput"
+        },
+        "user_goal": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Goal"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        }
+      },
+      "required": [
+        "session_id",
+        "consent_ai",
+        "scene"
+      ],
+      "title": "TrackSelectRequest",
+      "type": "object"
+    },
+    "TrackSelectResponse": {
+      "additionalProperties": false,
+      "description": "One startup analysis answer: a candidate target (or an honest non-selection) and what it cost.\n\nA non-selection is a successful answer, not an error: ``status`` says which one it is and ``rationale``\nsays why. ``target`` is a short **English** noun for the tracker's detector, never a location — this\nanalysis does not claim to have located anything, and the tracker's own acquisition accuracy is\nunchanged by it. A client may show that noun as-is (it is the label the detector is working from);\n``rationale`` is the human-facing Korean sentence to show a person.\n``usage``/``provider``/``model`` are the one call's own accounting, reported for every outcome\nincluding a non-selection, so a consumed call is never silently uncounted.",
+      "properties": {
+        "selection_id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Selection Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/TargetSelectionStatus"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        },
+        "provider": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "selection_id",
+        "frame_id",
+        "status",
+        "provider"
+      ],
+      "title": "TrackSelectResponse",
+      "type": "object"
+    },
+    "Usage": {
+      "additionalProperties": false,
+      "description": "Provider token accounting for one call. Belongs to the app/provider layer, not the renderer SDK.",
+      "properties": {
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Tokens"
+        },
+        "cached_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Input Tokens"
+        },
+        "thought_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thought Tokens"
+        },
+        "tool_use_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Use Tokens"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    },
+    "VisualGoalStatus": {
+      "additionalProperties": false,
+      "description": "Whole-goal visual assessment for the application/user, distinct from step-level advice.\n\n- visually_satisfied: Current scene clearly and directly shows the user goal has been accomplished.\n- in_progress: Goal is active and work visibly remains to be done.\n- uncertain: Visual evidence in the current scene is insufficient, blurry, occluded, or missing targets.\n- not_applicable: No explicit user goal was supplied.",
+      "properties": {
+        "status": {
+          "enum": [
+            "visually_satisfied",
+            "in_progress",
+            "uncertain",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "rationale"
+      ],
+      "title": "VisualGoalStatus",
+      "type": "object"
+    }
+  }
+}

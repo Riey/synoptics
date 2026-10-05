@@ -1,0 +1,1157 @@
+:root {
+  --bg-primary: #ffffff;
+  --bg-surface: #f9fafb;
+  --bg-card: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --accent-primary: #1d4ed8;
+  --accent-hover: #1e40af;
+  --accent-success: #047857; /* verified WCAG AA contrast against #ffffff */
+  --accent-warning: #b45309; /* verified WCAG AA contrast against #ffffff */
+  --accent-danger: #b91c1c; /* verified WCAG AA contrast against #ffffff */
+  --border-subtle: #e5e7eb;
+  --border-medium: #d1d5db;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #111827;
+    --bg-surface: #1f2937;
+    --bg-card: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --accent-primary: #93c5fd;
+    --accent-hover: #bfdbfe;
+    --accent-success: #34d399;
+    --accent-warning: #fbbf24;
+    --accent-danger: #f87171;
+    --border-subtle: #374151;
+    --border-medium: #4b5563;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.5;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.header-mark {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: var(--radius-md);
+}
+
+.header-title {
+  font-size: 1.375rem; /* 22px */
+  font-weight: 600;
+}
+
+.header-subtitle {
+  font-size: 0.9375rem; /* 15px */
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.header-badge {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--accent-success);
+}
+
+.badge-live {
+  background: rgba(4, 120, 87, 0.15);
+  border: 1.5px solid var(--accent-success);
+}
+
+/* Two columns in landscape, stacked at narrow widths and at 200% zoom. */
+.main-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.workspace-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.card-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+}
+
+.card-description {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.btn-large {
+  padding: 0.875rem 1.5rem;
+  font-size: 1.0625rem;
+}
+
+/* Forms */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.mode-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border: 0;
+  min-width: 0;
+}
+
+.mode-picker label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mode-picker label:has(input:checked) {
+  border-color: var(--accent-primary);
+  background: var(--bg-surface);
+}
+
+/* Plan model picker: each option carries its server-side availability, and the note spans the row. */
+.plan-model-picker .plan-model-status {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.plan-model-picker label[data-state='unavailable'] .plan-model-status {
+  color: var(--accent-danger);
+}
+
+.plan-model-picker .plan-model-note {
+  flex-basis: 100%;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.plan-model-picker:disabled label {
+  cursor: default;
+  opacity: 0.75;
+}
+
+/* Core picker: both cores are always available, so the note spans the row and names what the choice does. */
+.plan-core-picker .plan-core-note {
+  flex-basis: 100%;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.plan-core-picker:disabled label {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.input-text {
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  width: 100%;
+  resize: vertical;
+}
+
+.form-feedback {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  margin-top: 0.25rem;
+}
+
+.form-feedback-error {
+  color: var(--accent-danger);
+}
+
+.consent-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+}
+
+.checkbox-label {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.checkbox-label input {
+  margin-top: 0.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Alerts */
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-medium);
+  background: var(--bg-card);
+  font-size: 0.9375rem;
+}
+
+.alert-message {
+  flex: 1;
+}
+
+.alert-icon {
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.alert-error {
+  border-color: var(--accent-danger);
+  background: rgba(185, 28, 28, 0.1);
+}
+
+.alert-warning {
+  border-color: var(--accent-warning);
+  background: rgba(180, 83, 9, 0.1);
+}
+
+.alert-dismiss-btn {
+  font: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Advice */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--border-medium);
+  white-space: nowrap;
+}
+
+.badge-manual {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.badge-observed {
+  border-color: var(--accent-success);
+  background: rgba(4, 120, 87, 0.12);
+}
+
+.badge-warning {
+  border-color: var(--accent-warning);
+  background: rgba(180, 83, 9, 0.12);
+}
+
+/* Progressive disclosure for optional sections. */
+.disclosure {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.disclosure-summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+/* Live camera stage: the video *is* the scene, and the overlay box is the video's content rect. */
+.camera-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.camera-stage-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.camera-stage-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000000;
+  cursor: pointer;
+}
+
+/* Placed imperatively at the letterboxed content rect (never the media box) — see camera/geometry.ts. */
+.camera-stage-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* A withdrawn drawing leaves an empty, ready overlay: the video keeps playing underneath it. */
+
+.camera-stage-status {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.camera-stage-status[data-camera-status='live'] .status-dot {
+  background: #22c55e;
+}
+
+.camera-stage-status[data-camera-status='starting'] .status-dot {
+  background: #f59e0b;
+}
+
+/* Capture-time advice: an answer that may not be drawn still says something, so its words sit over the
+   live picture. Text only, bottom-left, never covering the guidance area, never intercepting taps. */
+.camera-stage-advice {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  max-width: 32rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  pointer-events: none;
+}
+
+.camera-stage-advice-headline {
+  font-weight: 700;
+  color: #bae6fd;
+}
+
+.camera-stage-advice-body {
+  white-space: pre-wrap;
+}
+
+/* The live track box: a sibling svg on the same content rect as the guidance svg, mutated outside React
+   per frame. Hidden by default; the rAF loop sets visibility only while the box is fresh and tracking. */
+.live-track-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Minimal tracking status over the video (state + frame age), in the capture-advice palette. Top-right of
+   the content rect, below the camera status pill, clear of the guidance badges and the advice band. */
+.camera-stage-track-chip {
+  position: absolute;
+  top: 2.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  pointer-events: none;
+}
+
+.camera-stage-track-chip-ok {
+  color: #bae6fd;
+  border-color: #0ea5e9;
+}
+
+.camera-stage-track-chip-warn {
+  color: #fde68a;
+  border-color: #f59e0b;
+}
+
+.camera-stage-status[data-camera-status='denied'] .status-dot,
+.camera-stage-status[data-camera-status='error'] .status-dot,
+.camera-stage-status[data-camera-status='insecure'] .status-dot,
+.camera-stage-status[data-camera-status='ended'] .status-dot {
+  background: #f87171;
+}
+
+.camera-stage-status[data-camera-status='idle'] .status-dot,
+.camera-stage-status[data-camera-status='unavailable'] .status-dot,
+.camera-stage-status[data-camera-status='unsupported'] .status-dot {
+  background: #94a3b8;
+}
+
+.camera-stage-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.9);
+  color: #f1f5f9;
+}
+
+.camera-stage-placeholder .text-secondary {
+  color: #cbd5e1;
+  max-width: 34rem;
+}
+
+.camera-stage-tap {
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.camera-device-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 12rem;
+}
+
+/* "What the AI actually saw": provenance for the captured frame, never a replacement for the video. */
+
+@media (max-width: 900px) {
+  /* Scene → actions → advice stay adjacent when the layout collapses to a single column. */
+  .camera-stage-media {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Real-time guidance (live) panel and the mirror preference.
+
+   The panel states its own bound in place: what it sends, how often, how many
+   automatic requests remain, and why it stopped. Color is used only to mark the
+   running/stopped state; the reason itself is always text.
+   --------------------------------------------------------------------------- */
+
+.live-cost {
+  font-variant-numeric: tabular-nums;
+}
+
+.mirror-toggle-field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  flex: 1 1 100%;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.mirror-toggle-field input {
+  margin-top: 0.2rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* The preview is flipped; the overlay above it is NOT, because the model's coordinates are already in
+   the flipped image's orientation (they describe the frame that was actually sent). */
+.camera-stage-video[data-mirror='on'] {
+  transform: scaleX(-1);
+}
+
+/* Debug panel. It is a diagnostic surface, so numbers are tabular and long identifiers wrap instead of
+   widening the column; nothing here is part of the normal guidance path. */
+
+.debug-wait {
+  border-left: 3px solid var(--accent-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background-color: var(--bg-surface);
+}
+
+.debug-wait p {
+  margin-top: 0.25rem;
+}
+
+.debug-numbers {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* Target tracking (v4). The card is self-contained; nothing here styles the live preview or the
+   guidance overlay. The still wrapper is given the image's exact aspect ratio, so the overlay's
+   normalized coordinates need no letterbox math and no mirror transform. */
+.track-controls {
+  flex-wrap: wrap;
+}
+
+.track-target-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.track-diagnostics {
+  margin-top: 0.75rem;
+}
+
+.track-diagnostics > summary {
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.track-pair {
+  margin-top: 0.75rem;
+}
+
+.track-still {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border-radius: var(--radius-sm, 0.375rem);
+  background-color: var(--bg-surface, #0f172a);
+}
+
+.track-still-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.track-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The same double-stroke grammar as the guidance focus box: readable on any image without relying on
+   colour alone to carry meaning. */
+.track-box-outer {
+  fill: none;
+  stroke: rgba(2, 6, 23, 0.9);
+  stroke-width: 5;
+}
+
+.track-box-inner {
+  fill: none;
+  stroke: #f8fafc;
+  stroke-width: 2;
+}
+
+.target-select {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.target-select-marquee {
+  position: absolute;
+  border: 2px dashed rgba(248, 250, 252, 0.95);
+  background-color: rgba(56, 189, 248, 0.12);
+  pointer-events: none;
+}
+
+.target-select-hint {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------------------- guide lane */
+
+/* The narration band sits at the TOP of the video's content rect (inside the content-rect overlay), under the
+   camera status pill and left of the live-track chip (top-right, 2.5rem), so a low box is never hidden by it.
+   The anchored label is placed around this band and the chips (AnchoredGuidanceOverlay). */
+.camera-stage-top-stack {
+  position: absolute;
+  top: 2.5rem;
+  left: 0.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.375rem;
+  max-width: min(36rem, calc(100% - 12rem));
+  pointer-events: none;
+}
+
+.camera-stage-top-stack > .camera-stage-advice {
+  position: static;
+  max-width: 100%;
+}
+
+/* Narrow stages: the band takes the full width under the chip row instead of squeezing beside the chip. */
+@media (max-width: 640px) {
+  .camera-stage-top-stack {
+    top: 4.375rem;
+    right: 0.5rem;
+    max-width: none;
+  }
+}
+
+.narration-bar {
+  max-width: 36rem;
+}
+
+.narration-bar[data-presentation='overlay'] {
+  padding: 0.375rem 0.625rem;
+  gap: 0.125rem;
+}
+
+.narration-details {
+  pointer-events: auto;
+  font-size: 0.875rem;
+}
+
+.narration-details > summary,
+.plan-summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+}
+
+.narration-details[open] > p {
+  max-width: 26ch;
+  padding-bottom: 0.5rem;
+}
+
+.plan-card {
+  display: block;
+}
+
+.plan-card[open] > :not(summary) {
+  margin-top: 0.75rem;
+}
+
+.narration-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.narration-chip {
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: #e2e8f0;
+}
+
+.narration-chip-pending {
+  border-color: #a78bfa;
+  color: #ddd6fe;
+}
+
+.narration-chip-checking {
+  border-color: #f59e0b;
+  color: #fde68a;
+}
+
+.narration-chip-done {
+  border-color: #22c55e;
+  color: #bbf7d0;
+}
+
+.narration-chip-stale {
+  border-color: #f59e0b;
+  color: #fde68a;
+}
+
+.narration-say {
+  font-size: 0.9375rem;
+}
+
+.narration-say[data-streaming='true'] {
+  opacity: 0.85;
+}
+
+.narration-target {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+}
+
+.narration-warn {
+  color: #fde68a;
+}
+
+.narration-budget {
+  color: #fde68a;
+  font-size: 0.75rem;
+}
+
+.narration-confirm {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  pointer-events: auto;
+}
+
+/* The anchored commands: same content rect as the live box. The cue colours are the defaults for the preferred
+   sky accent; AnchoredGuidanceOverlay overrides them on the root once per motion run (auto contrast). */
+.anchored-guidance {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --cue-accent: #38bdf8;
+  --cue-halo: rgba(2, 6, 23, 0.95);
+  --cue-glow: rgba(56, 189, 248, 0.5);
+  --cue-bubble-bg: rgba(15, 23, 42, 0.94);
+  --cue-bubble-fg: #f8fafc;
+}
+
+.anchored-guidance-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  visibility: hidden;
+}
+
+/* The focus ring: four rounded corner brackets in CSS px (ringPath), a 7 px halo under a 3 px accent. */
+.anchored-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.anchored-focus-outer,
+.anchored-focus-inner {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.anchored-focus-outer {
+  stroke: var(--cue-halo);
+  stroke-width: 7px;
+}
+
+.anchored-focus-inner {
+  stroke: var(--cue-accent);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 6px var(--cue-glow));
+}
+
+.anchored-focus-warn {
+  stroke-dasharray: 6 4;
+}
+
+.anchored-warn-box {
+  fill: none;
+  stroke: #f97316;
+  stroke-width: 4;
+  stroke-dasharray: 8 5;
+}
+
+.plan-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding-left: 1.25rem;
+}
+
+.plan-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.plan-step--current {
+  border-color: var(--accent-primary);
+  background: var(--bg-surface);
+  font-weight: 600;
+}
+
+.plan-step--done,
+.plan-step--user_done,
+.plan-step--skipped {
+  color: var(--text-muted);
+}
+
+/* The step's state in words (완료 ✓ / 건너뜀 / 현재 / 대기); a skipped step is not struck through. */
+.plan-step-state {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.plan-step--current .plan-step-state {
+  color: var(--accent-primary);
+}
+
+.plan-step-done {
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+/* The user's words to the guide (TalkBar): under the camera stage; pinned to the bottom on phones. */
+.talk-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+}
+
+.talk-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.talk-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+}
+
+.talk-send {
+  min-height: 44px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.talk-exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  font-size: 0.875rem;
+}
+
+.talk-who {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.talk-status {
+  font-size: 0.8125rem;
+  color: var(--accent-warning);
+}
+
+/* A reply may be a cause plus a short numbered list (up to 400 characters): keep its line breaks, scroll when long. */
+.talk-exchange {
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.talk-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.talk-status.talk-wait {
+  color: var(--text-secondary);
+}
+
+/* Voice: the microphone (one utterance per press) and the spoken-feedback switch. */
+.talk-mic {
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.talk-mic-on {
+  color: var(--accent-warning);
+  border-color: var(--accent-warning);
+  animation: talk-mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes talk-mic-pulse {
+  50% { opacity: 0.55; }
+}
+
+.voice-toggle {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  min-height: 44px;
+}
+
+.voice-toggle input {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talk-mic-on { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .talk-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    padding: 0.5rem 0;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+  }
+}
+
+.guide-controls {
+  flex-wrap: wrap;
+}
+
+.guide-debug-calls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1.25rem;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The build line under the server badge (version · commit · build time): small, never the focus. */
+.build-line {
+  align-self: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Debug bug report (camera-controls row) */
+.bug-report {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.bug-report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.bug-report-status {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.bug-report-comment {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.bug-report-comment .input-text {
+  flex: 1;
+  min-width: 0;
+}

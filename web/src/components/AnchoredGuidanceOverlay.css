@@ -1,0 +1,131 @@
+/**
+ * Anchored guidance overlay: action motion, callout and leader line styling.
+ * Stable CSS-pixel sizing, high-contrast borders, and clear typography.
+ */
+
+.anchored-pixel-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/*
+ * Action motion (actionMotion.ts): positions and opacity are set per frame by the rAF loop; no CSS animation,
+ * so reduced motion is handled in JS (end pose only). Colours come from the run's cue custom properties
+ * (--cue-accent, --cue-halo, --cue-glow; see AnchoredGuidanceOverlay): a tight halo for edges plus a soft glow.
+ */
+.anchored-motion {
+  filter: drop-shadow(0 0 2px var(--cue-halo)) drop-shadow(0 0 7px var(--cue-glow));
+}
+
+.anchored-motion rect,
+.anchored-motion path,
+.anchored-motion circle {
+  fill: none;
+  stroke: var(--cue-accent);
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Dotted: with round caps a 2 px dash reads as a dot every 9 px. */
+.anchored-motion [data-dashed='true'] {
+  stroke-dasharray: 2 7;
+}
+
+.anchored-motion [data-filled='true'] {
+  fill: var(--cue-accent);
+}
+
+.anchored-leader-line {
+  fill: none;
+  stroke: var(--cue-accent);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.anchored-leader-dot {
+  fill: var(--cue-accent);
+  stroke: var(--cue-halo);
+  stroke-width: 1.5px;
+}
+
+/* The callout: a pill with an accent dot before the text, colours from the run's cue tone. */
+.anchored-callout {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 30px;
+  max-width: min(18rem, 100%);
+  padding: 0 14px 0 11px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  background: var(--cue-bubble-bg);
+  color: var(--cue-bubble-fg);
+  border: 1.5px solid var(--cue-accent);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 14px var(--cue-glow);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 2;
+}
+
+.anchored-callout-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cue-accent);
+}
+
+.anchored-callout-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * The four schematic glyphs (align/connect/disconnect/bend) mark the tracked box only: a short muted note next to
+ * the label says so, so nobody reads the guide, the pins or the lead as a real pin position. Static text, no
+ * animation; it takes its space in the pill (the overlay measures the callout, so placement adapts).
+ */
+.anchored-callout-note {
+  display: none;
+  flex-shrink: 0;
+  margin-left: 2px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  opacity: 0.75;
+  letter-spacing: 0.01em;
+}
+
+.anchored-callout[data-schematic='true'] .anchored-callout-note {
+  display: inline;
+}
+
+/* Follower mismatch warning: orange on a dark pill whatever the cue colour. */
+.anchored-callout.anchored-label-warn {
+  background: rgba(15, 23, 42, 0.94);
+  color: #ffedd5;
+  border-color: #f97316;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(249, 115, 22, 0.35);
+}
+
+.anchored-callout.anchored-label-warn .anchored-callout-dot {
+  background: #f97316;
+}

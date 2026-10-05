@@ -1,0 +1,538 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VisualContracts",
+  "type": "object",
+  "properties": {
+    "ArrowCommand": {
+      "$ref": "#/$defs/ArrowCommand"
+    },
+    "Box": {
+      "$ref": "#/$defs/Box"
+    },
+    "FocusCommand": {
+      "$ref": "#/$defs/FocusCommand"
+    },
+    "FramedRenderReport": {
+      "$ref": "#/$defs/FramedRenderReport"
+    },
+    "GestureCommand": {
+      "$ref": "#/$defs/GestureCommand"
+    },
+    "GuidanceAdvice": {
+      "$ref": "#/$defs/GuidanceAdvice"
+    },
+    "GuidelineStep": {
+      "$ref": "#/$defs/GuidelineStep"
+    },
+    "HintCommand": {
+      "$ref": "#/$defs/HintCommand"
+    },
+    "PathCommand": {
+      "$ref": "#/$defs/PathCommand"
+    },
+    "Point": {
+      "$ref": "#/$defs/Point"
+    },
+    "VisualGuidance": {
+      "$ref": "#/$defs/VisualGuidance"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ArrowCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "arrow",
+          "title": "Kind",
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/Point"
+        },
+        "to": {
+          "$ref": "#/$defs/Point"
+        },
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "from",
+        "to",
+        "label"
+      ],
+      "title": "ArrowCommand",
+      "type": "object"
+    },
+    "Box": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Height",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "Box",
+      "type": "object"
+    },
+    "FocusCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "focus",
+          "title": "Kind",
+          "type": "string"
+        },
+        "box": {
+          "$ref": "#/$defs/Box"
+        },
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "box",
+        "label"
+      ],
+      "title": "FocusCommand",
+      "type": "object"
+    },
+    "FramedRenderReport": {
+      "additionalProperties": false,
+      "description": "What the renderer did with a VisualGuidance payload.\n\nThis is a *client-reported* observation: it records what the local renderer actually did on the\ncaller's machine. It is untrusted input to the server — never a completion proof, a security\nassertion, or evidence that a human verified anything.\n\n``frame_id`` is the frame the guidance **targeted** (the report's identity), so a report about an\nolder frame stays identifiable. In a live-camera flow the report a client forwards usually names the\n*previous* capture, not the one being analysed now: it is then history about superseded guidance,\nand it is never evidence about the current scene. Only when the payload is too malformed to identify\nat all does the renderer fall back to the frame it was displaying. ``guidance_id`` is null in that\nsame case.",
+      "properties": {
+        "guidance_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Guidance Id"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "rendered",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "command_ids": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Command Ids",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "guidance_id",
+        "frame_id",
+        "status",
+        "command_ids"
+      ],
+      "title": "FramedRenderReport",
+      "type": "object"
+    },
+    "GestureCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "gesture",
+          "title": "Kind",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "maxItems": 64,
+          "minItems": 2,
+          "title": "Points",
+          "type": "array"
+        },
+        "duration_ms": {
+          "maximum": 5000,
+          "minimum": 1000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "points",
+        "duration_ms",
+        "label"
+      ],
+      "title": "GestureCommand",
+      "type": "object"
+    },
+    "GuidanceAdvice": {
+      "additionalProperties": false,
+      "description": "The single advice envelope produced by an agent/provider and returned to the browser.",
+      "properties": {
+        "explanation": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "observation": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Observation",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/GuidelineStep"
+          },
+          "maxItems": 20,
+          "title": "Steps",
+          "type": "array"
+        },
+        "evidence_kind": {
+          "enum": [
+            "reference",
+            "observed_scene",
+            "general_inference",
+            "uncertain_view"
+          ],
+          "title": "Evidence Kind",
+          "type": "string"
+        },
+        "references": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "title": "References",
+          "type": "array"
+        },
+        "commands": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/FocusCommand"
+              },
+              {
+                "$ref": "#/$defs/ArrowCommand"
+              },
+              {
+                "$ref": "#/$defs/PathCommand"
+              },
+              {
+                "$ref": "#/$defs/GestureCommand"
+              },
+              {
+                "$ref": "#/$defs/HintCommand"
+              }
+            ]
+          },
+          "maxItems": 3,
+          "title": "Commands",
+          "type": "array"
+        },
+        "needs_clarification": {
+          "title": "Needs Clarification",
+          "type": "boolean"
+        },
+        "clarification_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clarification Prompt"
+        },
+        "ready_to_advance": {
+          "title": "Ready To Advance",
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "explanation",
+        "observation",
+        "steps",
+        "evidence_kind",
+        "references",
+        "commands",
+        "needs_clarification",
+        "ready_to_advance",
+        "warnings"
+      ],
+      "title": "GuidanceAdvice",
+      "type": "object"
+    },
+    "GuidelineStep": {
+      "additionalProperties": false,
+      "description": "An optional, agent-authored step. Steps are content, never a mandatory state machine.",
+      "properties": {
+        "step_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Step Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "title",
+        "detail"
+      ],
+      "title": "GuidelineStep",
+      "type": "object"
+    },
+    "HintCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "hint",
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "reference": {
+          "enum": [
+            "none",
+            "line",
+            "circle",
+            "hatching"
+          ],
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "text",
+        "reference"
+      ],
+      "title": "HintCommand",
+      "type": "object"
+    },
+    "PathCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "path",
+          "title": "Kind",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "maxItems": 64,
+          "minItems": 2,
+          "title": "Points",
+          "type": "array"
+        },
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "points",
+        "label"
+      ],
+      "title": "PathCommand",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "VisualGuidance": {
+      "additionalProperties": false,
+      "description": "The framed envelope consumed by every renderer entrypoint: which guidance, which frame, what advice.",
+      "properties": {
+        "guidance_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Guidance Id",
+          "type": "string"
+        },
+        "frame_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "advice": {
+          "$ref": "#/$defs/GuidanceAdvice"
+        }
+      },
+      "required": [
+        "guidance_id",
+        "frame_id",
+        "advice"
+      ],
+      "title": "VisualGuidance",
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+npm notice run visual-coach-monorepo@0.1.0 test:core
+npm notice run npm --workspace=packages/visual-tools test
+npm notice run @visual-coach/visual-tools@0.1.0 test
+npm notice run node --test dist/**/*.test.js
+▶ framed guidance entrypoint
+  ✔ a malformed payload is rejected without a guidance id (7.078589ms)
+  ✔ a frame mismatch is stale before any DOM work (0.714812ms)
+  ✔ an ungrounded reference is rejected before any DOM work (6.348816ms)
+  ✔ a valid payload against an unusable host reports a rejected render (0.398751ms)
+✔ framed guidance entrypoint (15.195142ms)
+▶ visual contract validation
+  ✔ accepts a well formed advice payload (6.641607ms)
+  ✔ reports an unknown contract name instead of throwing (0.06697ms)
+  ✔ rejects non-finite coordinates without JSON serialization (1.134755ms)
+  ✔ rejects a zero-width focus box (0.109801ms)
+  ✔ rejects a box escaping the unit square (0.189731ms)
+✔ visual contract validation (8.816256ms)
+▶ rejected payloads are reported invalid
+  ✔ a bad gesture duration is refused (0.295721ms)
+  ✔ more than three commands are refused (0.471572ms)
+  ✔ duplicate command ids are refused (0.119841ms)
+  ✔ an unknown kind is refused (0.12344ms)
+  ✔ a non-array payload is refused (0.05909ms)
+  ✔ a valid bundle passes both the schema and the curated path (0.06418ms)
+  ✔ the low-level path also enforces the advice-level command rules (0.081551ms)
+  ✔ a hostile kind never resolves through the prototype (0.10838ms)
+  ✔ a whitespace-only clarification prompt is treated like Python (0.071611ms)
+✔ rejected payloads are reported invalid (1.839968ms)
+▶ advice relational rules
+  ✔ clarification cannot carry spatial commands (0.11107ms)
+  ✔ clarification alone with a hint is allowed (0.09021ms)
+  ✔ uncertain_view requires clarification (0.0602ms)
+  ✔ reference evidence requires a cited reference (0.064401ms)
+  ✔ at most one gesture command is allowed (0.13703ms)
+  ✔ text guidance cannot carry visual commands (0.124921ms)
+✔ advice relational rules (0.809133ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.134161

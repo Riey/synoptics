@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>synoptics Live 테스트</title>
+<style>
+  :root { --bg:#fafafa; --fg:#1d1d1f; --muted:#6b6b70; --line:#d8d8dc; --accent:#2563eb; --warn:#ea580c; --panel:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141416; --fg:#ececf0; --muted:#9a9aa2; --line:#33333a; --accent:#60a5fa; --warn:#fb923c; --panel:#1c1c20; } }
+  * { box-sizing: border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; padding:16px; font:14px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  h1 { font-size:17px; margin:0 0 4px; }
+  .muted { color:var(--muted); }
+  .grid { display:grid; gap:12px; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); margin-top:12px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: minmax(0,1fr); } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0; }
+  input[type=text], input[type=password] { flex:1; min-width:140px; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; }
+  button { padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.45; cursor:default; }
+  #stage { position:relative; width:100%; background:#000; border-radius:6px; overflow:hidden; }
+  #view { display:block; width:100%; height:auto; touch-action:none; }
+  #say { font-size:16px; font-weight:600; min-height:1.5em; }
+  pre { margin:0; max-height:420px; overflow:auto; font-size:11.5px; white-space:pre-wrap; word-break:break-all; }
+  #log { max-height:160px; overflow:auto; font-size:12px; }
+  label { user-select:none; }
+  textarea { width:100%; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; font:inherit; resize:vertical; }
+  select { padding:5px 6px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; }
+  .pstep { border:1px solid var(--line); border-radius:6px; padding:6px 8px; margin:4px 0; cursor:pointer; }
+  .pstep.sel { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+  .mark { color:var(--warn); font-weight:600; }
+  .mrow { border-top:1px solid var(--line); padding-top:6px; margin-top:6px; }
+  #reviewPanel, #runPanel, #blockedBanner, #proposalBanner { margin-top:12px; }
+  #blockedBanner { border-color:var(--warn); }
+  #proposalBanner { border-color:var(--accent); }
+  .small { font-size:12px; line-height:1.4; }
+  #clarifyPanel { border-color:var(--accent); }
+  .question { font-size:16px; font-weight:600; margin:6px 0 8px; white-space:pre-wrap; }
+  #clarifyId { font-variant-numeric:tabular-nums; }
+  .details { margin-top:8px; padding:8px 10px; border-left:3px solid var(--accent);
+    background:color-mix(in srgb, var(--accent) 8%, transparent); border-radius:0 6px 6px 0; white-space:pre-wrap; }
+  .sources { margin-top:6px; font-size:12px; line-height:1.6; }
+  .sources a { color:var(--accent); }
+  .sdetails { margin-top:4px; font-size:13px; border-left:2px solid var(--line); padding-left:8px; white-space:pre-wrap; }
+  .refList { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .refItem { border:1px solid var(--line); border-radius:6px; padding:5px; width:112px; }
+  .refItem img { display:block; width:100px; height:75px; object-fit:contain; background:#000; border-radius:4px; }
+  .refItem input { width:100px; min-width:0; font-size:11px; padding:2px 4px; margin-top:4px; }
+  .refItem button { font-size:11px; padding:2px 6px; margin-top:4px; width:100%; }
+  .refItem .meta { font-size:10px; color:var(--muted); overflow-wrap:anywhere; }
+  button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+</style>
+</head>
+<body>
+<h1>synoptics Live API 테스트 클라이언트</h1>
+<div class="muted" id="health">서버 상태 확인 중…</div>
+
+<div class="grid">
+  <div>
+    <div class="panel">
+      <div class="row" id="codeRow" hidden>
+        <input id="code" type="password" placeholder="접근 코드" autocomplete="off">
+      </div>
+      <div class="row">
+        <button id="connect" class="primary">연결 + 카메라</button>
+        <button id="disconnect" disabled>세션 종료</button>
+        <span class="muted" id="conn">연결 안 됨</span>
+      </div>
+      <div class="row">
+        <input id="goal" type="text" maxlength="300" placeholder="목표 (예: 안경을 벗어서 케이스에 넣기)">
+      </div>
+      <div class="row">
+        <label><input id="planMode" type="checkbox"> Plan 모드로 시작 (검토 후 실행)</label>
+        <span class="muted" id="planLimits">Plan 모드 상한: 연결 후 표시</span>
+      </div>
+      <div class="row">
+        <label>계획 모델 <select id="planModel" aria-describedby="modelNote">
+          <option value="deepseek:high">DeepSeek · high</option>
+          <option value="astra:high">Astra · high</option>
+        </select></label>
+      </div>
+      <div class="muted" id="modelNote" role="status">모델 준비 상태 확인 중…</div>
+      <div class="muted small" id="searchNote" hidden>자동 웹 검색: DeepSeek에는 내장 검색이 없어 켜지지 않습니다. 서버의 실제 검색은 <b>Astra · high</b>를 Plan 모드로 시작할 때만 사용됩니다. (별도의 DeepSeek 검색 비교 실험은 서버가 도구를 실행하는 것으로, 이 앱의 자동 검색 기능이 아닙니다.)</div>
+      <div class="row">
+        <label>코어 <select id="coreMode" aria-describedby="coreNote">
+          <option value="classic">기존 코어 · 남은 단계 전체 확인</option>
+          <option value="sequential">순차 코어 · 현재 단계만 확인</option>
+          <option value="graph">그래프 코어 · 전체 재판정·독립 단계 병행</option>
+        </select></label>
+      </div>
+      <div class="muted" id="coreNote" role="status"></div>
+      <div class="muted">모델·코어·계획 검토는 각각 고릅니다. 실행 중에는 고정되며, 바꾸려면 중지한 뒤 새로 시작하세요.</div>
+      <div class="panel" id="materialsPanel" hidden style="margin:6px 0">
+        <div class="muted">자료 (선택 · 붙여넣기 또는 .txt/.md 읽기 · 파일은 브라우저에서만 읽고 업로드하지 않습니다)</div>
+        <div id="materialRows"></div>
+      </div>
+      <div class="panel" id="refPanel" hidden style="margin:6px 0">
+        <div class="muted">참고 사진 (선택)</div>
+        <div class="muted small">현재 카메라 화면이 아니라 판단에 참고할 <b>별도 사진</b>입니다. 계획을 세울 때만 전송되고, 매 프레임으로는 보내지 않습니다. 사진은 브라우저에서만 축소·변환되며 서버 상태·로그에 남지 않습니다.</div>
+        <div class="row">
+          <button id="refAdd" type="button">참고 사진 추가</button>
+          <button id="refClear" type="button">모두 지우기</button>
+          <span class="muted" id="refCount" role="status">0장</span>
+          <input id="refFile" type="file" accept="image/*" multiple hidden>
+        </div>
+        <div id="refList" class="refList"></div>
+        <div class="muted small" id="refMsg" role="status"></div>
+      </div>
+      <div class="row">
+        <label><input id="consent" type="checkbox"> AI 처리에 동의</label>
+        <button id="start" disabled>가이드 시작</button>
+        <button id="stop" disabled>중지</button>
+        <button id="follow" disabled>지금 다시 보기</button>
+        <button id="replan" disabled>계획 다시 짜기</button>
+        <button id="confirm" disabled>완료 확인</button>
+      </div>
+      <div class="row">
+        <label><input id="voiceOut" type="checkbox" checked> 음성 출력</label>
+        <label><input id="serverTts" type="checkbox" checked> 서버 TTS</label>
+        <label><input id="visuals" type="checkbox" checked> 오버레이</label>
+        <button id="select" disabled title="정지 화면 위에 박스를 끌어서 대상 지정">대상 직접 지정</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div id="stage"><canvas id="view" width="640" height="360"></canvas></div>
+      <div id="say" style="margin-top:8px"></div>
+      <div id="stepDetails" class="details" hidden></div>
+      <div id="stepSources" class="sources" hidden></div>
+      <div class="row">
+        <input id="talk" type="text" maxlength="200" placeholder="질문 (텍스트)">
+        <button id="talkSend" disabled>보내기</button>
+      </div>
+      <div class="muted" id="talkReply"></div>
+    </div>
+    <div class="panel" id="clarifyPanel" hidden>
+      <div class="row">
+        <strong id="clarifyHead">확인 질문</strong>
+        <span class="muted" id="clarifyCount"></span>
+        <span class="muted small" id="clarifyId"></span>
+      </div>
+      <div class="question" id="clarifyQ"></div>
+      <div id="clarifyInput">
+        <div class="mrow">
+          <label class="muted small" for="clarifyAnswer">답변 (1~1000자)</label>
+          <textarea id="clarifyAnswer" rows="3" maxlength="1000" placeholder="질문에 대한 답을 적어 주세요"></textarea>
+        </div>
+        <div class="muted small" id="clarifyRefInfo"></div>
+        <div class="row">
+          <button id="clarifySend" class="primary" type="button">답변 보내기</button>
+          <button id="clarifyUnsure" type="button">모르겠어요</button>
+          <button id="clarifyRefAdd" type="button">참고 사진 추가</button>
+        </div>
+      </div>
+      <div class="muted small" id="clarifyStatus" role="status"></div>
+      <div class="mrow muted small">답변과 출처는 계획을 다듬기 위한 정보일 뿐이며, 실행은 초안을 직접 승인한 뒤에만 시작됩니다.</div>
+    </div>
+    <div class="panel" id="reviewPanel" hidden>
+      <div class="row"><strong>계획 검토</strong><span class="muted" id="planMeta"></span></div>
+      <div class="muted" id="planMaterials"></div>
+      <div id="planSources" class="sources" hidden></div>
+      <div id="planList"></div>
+      <div class="mrow muted">선택한 단계 고치기</div>
+      <div class="row"><input id="peSay" type="text" maxlength="60" placeholder="say (60자)"></div>
+      <div class="row"><input id="peDone" type="text" maxlength="60" placeholder="done_when (60자)"></div>
+      <div class="row">
+        <label>check <select id="peCheck"><option value="visual">visual</option><option value="user">user</option><option value="measure">measure</option></select></label>
+        <label><input id="peRequired" type="checkbox" aria-describedby="pePolicyHelp"> 절차 확인 필수</label>
+        <label><input id="peGoalRequired" type="checkbox" checked aria-describedby="pePolicyHelp"> 목표 달성에 필수</label>
+        <label>조건 <select id="peConditionKind"><option value="state">현재 유지 상태</option><option value="event">과거 발생 사건</option></select></label>
+      </div>
+      <div class="muted" id="pePolicyHelp">그래프 코어에서 목표 필수와 현재 상태·과거 사건을 구분합니다. 안전 선행조건은 절차 확인을 유지하세요. 목표 달성 확인이 안전 절차 이행을 뜻하지는 않습니다.</div>
+      <div class="row"><input id="peRequires" type="text" placeholder="requires (쉼표: s1, s2)"></div>
+      <div class="row"><input id="peTargets" type="text" placeholder="targets (쉼표: 상자, 완충재)"></div>
+      <div class="row">
+        <button id="peSave">수정 저장</button>
+        <button id="peAdd">단계 추가</button>
+        <button id="peRemove">단계 삭제</button>
+        <button id="peUp">위로</button>
+        <button id="peDown">아래로</button>
+      </div>
+      <div class="row">
+        <button id="planApprove" class="primary">승인하고 실행</button>
+        <button id="planDiscard">초안 버리기</button>
+      </div>
+    </div>
+    <div class="panel" id="runPanel" hidden>
+      <div class="row">
+        <button id="pause">일시정지</button>
+        <button id="resume">재개</button>
+        <button id="ackStep">이 단계 확인</button>
+        <span class="muted" id="runMeta"></span>
+      </div>
+    </div>
+    <div class="panel" id="graphStatus" hidden role="status"></div>
+    <div class="panel" id="pendingChecks" hidden role="status"></div>
+    <div class="panel" id="blockedBanner" hidden></div>
+    <div class="panel" id="proposalBanner" hidden>
+      <div id="proposalText"></div>
+      <div class="row"><button id="proposalAccept">변경안 적용</button><button id="proposalReject">변경안 버리기</button></div>
+    </div>
+  </div>
+  <div>
+    <div class="panel"><div class="muted">로그</div><div id="log"></div></div>
+    <div class="panel" style="margin-top:12px"><div class="muted">state</div><pre id="state">-</pre></div>
+  </div>
+</div>
+
+<video id="video" playsinline muted hidden></video>
+
+<script>
+"use strict";
+const PROTOCOL = "synoptics-live/0.1-draft";
+const $ = (id) => document.getElementById(id);
+const ACTION_KO = { press:"누르기", grasp:"잡기", move:"옮기기", rotate:"돌리기", open:"열기", close:"닫기", insert:"넣기",
+  remove:"빼기", attach:"붙이기", fold:"접기", place:"놓기", fit:"끼우기", screw:"나사", hold:"잡고 있기", flip:"뒤집기",
+  pull:"당기기", push:"밀기", align:"맞추기", connect:"연결하기", disconnect:"분리하기", bend:"다리 구부리기" };
+const DIR_KO = { up:"↑ 위로", down:"↓ 아래로", left:"← 왼쪽으로", right:"→ 오른쪽으로", clockwise:"↻ 시계 방향",
+  counterclockwise:"↺ 반시계 방향", tighten:"↻ 조이기", loosen:"↺ 풀기", none:"" };
+
+let health = null, sess = null, ws = null, limits = null, state = null, lastTrack = null;
+let seq = 0, outstanding = null, lastSent = 0, hiReq = null, retries = 0, closedForGood = false;
+let frozen = null, drag = null;   // select-box mode
+let selectedStepId = null;        // §15 계획 검토: 선택한 단계
+let startPending = false, runPlanModel = null;
+// 계획 확인(질문) UI 상태: state 메시지가 와도 입력 중인 답변을 지우지 않는다
+let clarifyKey = null, clarifyShown = false, clarifyPending = false, clarifySubmitted = false, clarifySentCount = 0, clarifyError = "";
+// 참고 사진: 현재 카메라 프레임과 별개. 세션 메모리에만 두고 상태·로그·DOM에 base64를 노출하지 않는다.
+let referenceImages = [];         // { frame_id, image_base64, label, bytes, w, h, url, name }
+let referenceBusy = false, referenceEpoch = 0;
+let REF_MAX = 12;                 // contracts.py REFERENCE_IMAGES_MAX; limits.reference_images_max 로 갱신
+const REF_LONG_SIDE = 1600;                                          // 선호 긴 변
+const REF_MAX_SIDE = 2048, REF_MAX_PIXELS = 2_073_600;               // contracts.py 상한
+const REF_MIN_W = 320, REF_MIN_H = 240, REF_MAX_BYTES = 1_500_000;   // contracts.py 하한/용량
+const REF_ENVELOPE_BYTES = 7.5 * 1024 * 1024;   // 10MiB 본문에서 카메라 프레임·자료·답변용 공간을 남긴다.
+const PLAN_MODELS = { "deepseek:high": "DeepSeek · high", "astra:high": "Astra · high" };
+const prefs = { voice_out: true, tts: "server", visuals: true };
+const video = $("video"), view = $("view"), ctx = view.getContext("2d");
+const enc = document.createElement("canvas"), encCtx = enc.getContext("2d");
+
+function log(msg) {
+  const d = document.createElement("div");
+  d.textContent = new Date().toLocaleTimeString() + "  " + msg;
+  $("log").prepend(d);
+}
+
+function packBinary(header, payload) {
+  const h = new TextEncoder().encode(JSON.stringify(header));
+  const out = new Uint8Array(4 + h.length + payload.byteLength);
+  new DataView(out.buffer).setUint32(0, h.length, false);
+  out.set(h, 4); out.set(new Uint8Array(payload), 4 + h.length);
+  return out.buffer;
+}
+function unpackBinary(buf) {
+  const len = new DataView(buf).getUint32(0, false);
+  return { header: JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, len))), payload: buf.slice(4 + len) };
+}
+
+// ---------------------------------------------------------------- health / session
+async function loadHealth() {
+  try {
+    health = await (await fetch("../v1/health", { cache: "no-store" })).json();
+    $("codeRow").hidden = !health.access_code_required;
+    $("health").textContent = `ready=${health.ready} · access=${health.access_mode} · engine=${health.engine} · ` +
+      `tts_ready=${health.tts_ready}${health.tts_voice ? " (" + health.tts_voice + ")" : ""} · build ${health.build.commit}`;
+  } catch (e) { health = null; $("health").textContent = "health 실패: " + e; }
+  refreshButtons();
+}
+
+async function connect() {
+  closedForGood = false; state = null; lastTrack = null;
+  startPending = false; runPlanModel = null;
+  clarifyKey = null; clarifyShown = false; clarifyPending = false; clarifySubmitted = false;
+  clarifySentCount = 0; clarifyError = "";
+  const body = health && health.access_code_required ? { access_code: $("code").value } : {};
+  const r = await fetch("../v1/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (r.status !== 201) { log(`세션 실패 ${r.status} ${j.error && j.error.code}`); return; }
+  sess = j; log("세션 " + sess.session_id.slice(0, 8));
+  await startCamera();
+  openSocket(null);
+}
+
+async function endSession() {
+  closedForGood = true;
+  if (ws) { try { ws.send(JSON.stringify({ type: "stop" })); } catch (e) {} ws.close(1000); }
+  if (sess) {
+    await fetch("../v1/sessions/" + sess.session_id, { method: "DELETE", keepalive: true,
+      headers: { Authorization: "Bearer " + sess.token } }).catch(() => {});
+    sess = null;
+  }
+  limits = null; state = null; startPending = false; runPlanModel = null;
+  clarifyKey = null; clarifyShown = false; clarifyPending = false; clarifySubmitted = false;
+  clarifySentCount = 0; clarifyError = "";
+  clearReferences("세션 종료");          // 세션 메모리와 함께 폐기
+  renderClarify();
+  setConn("연결 안 됨");
+}
+
+addEventListener("pagehide", () => {
+  if (sess) fetch("../v1/sessions/" + sess.session_id, { method: "DELETE", keepalive: true,
+    headers: { Authorization: "Bearer " + sess.token } });
+});
+
+function setConn(text) { $("conn").textContent = text; refreshButtons(); }
+
+// ---------------------------------------------------------------- socket
+function openSocket(resumeRev) {
+  const accept = new Audio().canPlayType('audio/ogg; codecs="opus"') ? ["audio/ogg"] : ["audio/mp4"];
+  ws = new WebSocket(sess.live_url);
+  ws.binaryType = "arraybuffer";
+  seq = 0; outstanding = null; limits = null;
+  ws.onopen = () => ws.send(JSON.stringify({ type: "hello", token: sess.token, protocol: PROTOCOL,
+    resume_rev: resumeRev, audio_accept: accept }));
+  ws.onmessage = (ev) => (typeof ev.data === "string" ? onJson(JSON.parse(ev.data)) : onBinary(ev.data));
+  ws.onclose = (ev) => {
+    log(`close ${ev.code}`); limits = null; setConn(`닫힘 (${ev.code})`);
+    if (clarifyPending) { clarifyPending = false; clarifyError = "연결이 끊겨 답변이 전달되지 않았을 수 있습니다. 다시 보내 주세요."; }
+    renderClarify();
+    const fatal = [1000, 4001, 4002, 4003, 4008, 4009].includes(ev.code);
+    if (closedForGood || fatal || !sess) return;
+    const delay = Math.min(1000 * 2 ** retries++, 8000);
+    setTimeout(() => sess && openSocket(state ? state.rev : null), delay);
+  };
+}
+
+function send(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+function sendPrefs() {
+  prefs.voice_out = $("voiceOut").checked; prefs.tts = $("serverTts").checked ? "server" : "browser";
+  prefs.visuals = $("visuals").checked; send({ type: "prefs", ...prefs });
+  if (!prefs.voice_out) stopSpeech(true);
+}
+
+function onJson(m) {
+  switch (m.type) {
+    case "ready": limits = m.limits; retries = 0; setConn("연결됨");
+      if (limits && limits.reference_images_max) REF_MAX = limits.reference_images_max;
+      renderLimits(); sendPrefs(); break;
+    case "state":
+      if (state && m.rev <= state.rev) break;
+      state = m; startPending = false;
+      if (m.phase === "idle") runPlanModel = null;
+      else if (["classic", "sequential", "graph"].includes(m.core_mode)) $("coreMode").value = m.core_mode;
+      renderState(); break;
+    case "track":
+      lastTrack = m;
+      if (outstanding && outstanding.seq === m.seq) outstanding = null;
+      break;
+    case "say": onSay(m); break;
+    case "capture_hi": hiReq = m.req_id; break;
+    case "error":
+      startPending = false;
+      if (CLARIFY_ERRORS[m.code]) {                       // 질문 왕복 오류는 패널에도 그대로 보여 준다
+        clarifyPending = false; clarifySubmitted = false; clarifyError = CLARIFY_ERRORS[m.code];
+      } else if (clarifyPending) {
+        clarifyPending = false; clarifyError = `${m.message || m.code}${m.fatal ? " (fatal)" : ""}`;
+      }
+      refreshButtons(); renderClarify();
+      log(`error ${m.code}: ${m.message}${m.fatal ? " (fatal)" : ""}`); break;
+    case "bye": log("bye " + m.reason); break;
+  }
+}
+
+function onBinary(buf) {
+  const { header, payload } = unpackBinary(buf);
+  if (header.t === "audio") onAudio(header, payload);
+}
+
+// base64·대용량 바이너리는 state 패널에도 절대 그대로 찍지 않는다
+function redactState(key, value) {
+  if (typeof value === "string") {
+    if (/base64|data:image/i.test(key || "")) return "[생략됨]";
+    if (value.length > 2000) return `[긴 데이터 ${value.length}자 생략]`;
+  }
+  return value;
+}
+
+function renderState() {
+  $("state").textContent = JSON.stringify(state, redactState, 1);
+  const step = state.plan ? state.plan.steps[state.step_index] : null;
+  const pend = state.pending ? ` · 확인 중(${state.pending.stage})` : "";
+  const notice = state.notice ? ` · ${state.notice.text}` : "";
+  const part = state.partial ? (state.partial.first_say || state.partial.target || "") : "";
+  $("say").textContent = (step ? `${state.step_index + 1}. ${step.say}` : part) + pend + notice +
+    (state.replan_blocked_reason ? ` · ${state.replan_blocked_reason}` : "");
+  $("talkReply").textContent = state.talk ? `Q: ${state.talk.utterance} → ${state.talk.reply}` : "";
+  renderStepDetails();
+  renderSources($("stepSources"), researchSources());
+  renderPlan();
+  renderRun();
+  renderClarify();
+  refreshButtons();
+}
+
+function refreshButtons() {
+  const live = !!limits && !!state && ws && ws.readyState === 1;
+  const phase = state ? state.phase : "idle", running = live && phase === "running";
+  const locked = startPending || !["idle", "completed", "error"].includes(phase);
+  const model = $("planModel").value, modelReady = health?.plan_models?.[model] === true;
+  $("connect").disabled = !!sess || health?.ready !== true;
+  $("disconnect").disabled = !sess;
+  $("start").disabled = !live || locked || !modelReady || referenceBusy;
+  $("stop").disabled = !live || phase === "idle";
+  $("follow").disabled = !running; $("replan").disabled = !running;
+  $("confirm").disabled = !(live && state && state.completion === "confirmed");
+  $("talkSend").disabled = !running || state.talk_pending; $("talk").disabled = !!(state && state.talk_pending);
+  $("select").disabled = !live || phase === "idle";
+  for (const id of ["planModel", "coreMode", "planMode"]) $(id).disabled = locked;
+  for (const option of $("planModel").options) {
+    const available = health?.plan_models?.[option.value];
+    option.textContent = `${PLAN_MODELS[option.value]} · ${available === true ? "사용 가능" : available === false ? "준비 안 됨" : "확인되지 않음"}`;
+  }
+  $("modelNote").textContent = locked
+    ? `실행 모델: ${PLAN_MODELS[runPlanModel] || "알 수 없음"} · 실행 중 고정`
+    : modelReady ? `${PLAN_MODELS[model]}로 시작합니다. 준비 표시는 서버 구성 여부이며 잔액·품질 보증이 아닙니다.`
+      : `${PLAN_MODELS[model]}의 준비 상태가 확인되지 않아 시작할 수 없습니다. 다른 모델로 자동 변경하지 않습니다.`;
+  $("coreNote").textContent = $("coreMode").value === "graph"
+    ? "완료한 단계도 재판정합니다. 독립 단계는 순서와 무관하게 확인하되, 안전 선행조건은 행동 안내를 제한합니다."
+    : $("coreMode").value === "sequential"
+      ? "현재 단계만 판정하며, 상위 모델이 확인한 뒤 다음 한 단계로 진행합니다."
+      : "남은 단계들을 함께 판정합니다. 먼저 진행한 뒤 상위 모델이 재확인하고 필요하면 되돌립니다.";
+}
+
+// ---------------------------------------------------------------- camera + frames (credit 1, §5.1)
+async function startCamera() {
+  if (video.srcObject) return;
+  video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: false,
+    video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+  await video.play();
+  requestAnimationFrame(tick);
+}
+
+function encode(longSide, quality, maxBytes) {
+  const vw = video.videoWidth, vh = video.videoHeight;
+  const s = Math.min(1, longSide / Math.max(vw, vh));
+  enc.width = Math.round(vw * s); enc.height = Math.round(vh * s);
+  encCtx.drawImage(video, 0, 0, enc.width, enc.height);
+  const capturedAt = Date.now(), w = enc.width, h = enc.height;
+  return new Promise((resolve) => {
+    const attempt = (q) => enc.toBlob(async (blob) => {
+      if (blob.size > maxBytes && q > 0.25) return attempt(q - 0.1);
+      resolve({ buf: await blob.arrayBuffer(), w, h, capturedAt });
+    }, "image/jpeg", q);
+    attempt(quality);
+  });
+}
+
+let encoding = false;
+async function maybeSend() {
+  if (!limits || !video.videoWidth || encoding || frozen) return;
+  const now = Date.now();
+  if (hiReq) {
+    encoding = true; const req = hiReq; hiReq = null;
+    const f = await encode(limits.hi_long_side, limits.stream_jpeg_quality, limits.hi_max_bytes);
+    send0({ t: "frame", seq: seq++, captured_at: f.capturedAt, w: f.w, h: f.h, hi_req: req }, f.buf);
+    encoding = false; return;
+  }
+  if (outstanding && now - outstanding.at < 2000) return;
+  if (now - lastSent < 1000 / limits.max_fps) return;
+  encoding = true;
+  const f = await encode(limits.stream_long_side, limits.stream_jpeg_quality, limits.stream_max_bytes);
+  const s = seq++;
+  outstanding = { seq: s, at: Date.now() }; lastSent = Date.now();
+  send0({ t: "frame", seq: s, captured_at: f.capturedAt, w: f.w, h: f.h }, f.buf);
+  encoding = false;
+}
+function send0(header, buf) { if (ws && ws.readyState === 1) ws.send(packBinary(header, buf)); }
+
+// ---------------------------------------------------------------- drawing (§8)
+function tick() {
+  maybeSend();
+  const src = frozen ? frozen.bitmap : video;
+  const vw = frozen ? frozen.w : video.videoWidth, vh = frozen ? frozen.h : video.videoHeight;
+  if (vw && (view.width !== vw || view.height !== vh)) { view.width = vw; view.height = vh; }
+  if (vw) ctx.drawImage(src, 0, 0, view.width, view.height);
+  if (frozen) drawSelecting(); else drawOverlay();
+  requestAnimationFrame(tick);
+}
+
+function drawOverlay() {
+  if (state && state.phase === "reviewing") return;   // §15.8 검토 중에는 추적 박스·오버레이를 그리지 않는다
+  const t = lastTrack, W = view.width, H = view.height;
+  if (!t || t.state !== "tracking" || !t.box || !limits) return;
+  const b = { x: t.box.x * W, y: t.box.y * H, w: t.box.width * W, h: t.box.height * H };
+  ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.setLineDash([]);
+  ctx.strokeRect(b.x, b.y, b.w, b.h);   // debug box
+  const ov = state && state.overlay;
+  const fresh = Date.now() - t.captured_at <= limits.box_max_age_ms;
+  const bound = ov && ov.binding.run_id === t.run_id && ov.binding.track_id === t.track_id &&
+    ov.binding.generation === t.generation;
+  if (!ov || !bound || !fresh || !prefs.visuals) return;
+  const warn = ov.warn === "needs_reselect";
+  const focus = ov.commands.find((c) => c.kind === "focus");
+  const action = ov.commands.find((c) => c.kind === "action");
+  const label = ov.commands.find((c) => c.kind === "label");
+  if (focus || action) {
+    const pad = focus ? focus.pad : 0.15, px = b.w * pad, py = b.h * pad;
+    ctx.lineWidth = 4; ctx.strokeStyle = warn ? "#fb923c" : "#60a5fa"; ctx.setLineDash(warn ? [10, 6] : []);
+    ctx.beginPath(); ctx.roundRect(b.x - px, b.y - py, b.w + 2 * px, b.h + 2 * py, 12); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  const bubbles = [];
+  if (warn) bubbles.push("대상이 맞지 않아 보임");
+  if (label) bubbles.push(label.text);
+  if (action) bubbles.push(`${ACTION_KO[action.action] || action.action} ${DIR_KO[action.direction] || ""}`.trim());
+  ctx.font = `600 ${Math.max(14, Math.round(W / 40))}px system-ui`;
+  let y = b.y - 10;
+  for (const text of bubbles) {
+    const tw = ctx.measureText(text).width, th = Math.max(14, Math.round(W / 40)) + 10;
+    const x = Math.min(Math.max(b.x, 4), W - tw - 20);
+    y = Math.max(y - th, 4);
+    ctx.fillStyle = "rgba(0,0,0,.72)"; ctx.beginPath(); ctx.roundRect(x, y, tw + 16, th, 8); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.fillText(text, x + 8, y + th - 9);
+    y -= 4;
+  }
+}
+
+// ---------------------------------------------------------------- select box (§5.1)
+$("select").onclick = async () => {
+  if (frozen) { frozen = null; return; }
+  const f = await encode(limits.stream_long_side, limits.stream_jpeg_quality, limits.stream_max_bytes);
+  frozen = { ...f, bitmap: await createImageBitmap(new Blob([f.buf], { type: "image/jpeg" })) };
+  log("정지 화면: 박스를 끌어서 지정 (다시 누르면 취소)");
+};
+function pt(ev) {
+  const r = view.getBoundingClientRect();
+  return { x: (ev.clientX - r.left) / r.width, y: (ev.clientY - r.top) / r.height, px: ev.clientX, py: ev.clientY };
+}
+view.addEventListener("pointerdown", (ev) => { if (frozen) { drag = { a: pt(ev), b: pt(ev) }; view.setPointerCapture(ev.pointerId); } });
+view.addEventListener("pointermove", (ev) => { if (drag) drag.b = pt(ev); });
+view.addEventListener("pointerup", () => {
+  if (!drag || !frozen) return;
+  const { a, b } = drag; drag = null;
+  if (Math.abs(a.px - b.px) < 12 || Math.abs(a.py - b.py) < 12) { log("너무 작은 박스 (12px 미만)"); return; }
+  const c = (v) => Math.min(Math.max(v, 0), 1);
+  const x = c(Math.min(a.x, b.x)), y = c(Math.min(a.y, b.y));
+  const box = { x, y, width: Math.min(c(Math.max(a.x, b.x)) - x, 1 - x), height: Math.min(c(Math.max(a.y, b.y)) - y, 1 - y) };
+  const s = seq++;
+  outstanding = { seq: s, at: Date.now() };
+  send0({ t: "frame", seq: s, captured_at: frozen.capturedAt, w: frozen.w, h: frozen.h, select_box: box }, frozen.buf);
+  frozen = null;
+});
+function drawSelecting() {
+  if (!drag) return;
+  const W = view.width, H = view.height, { a, b } = drag;
+  ctx.lineWidth = 3; ctx.strokeStyle = "#facc15"; ctx.setLineDash([8, 6]);
+  ctx.strokeRect(Math.min(a.x, b.x) * W, Math.min(a.y, b.y) * H, Math.abs(a.x - b.x) * W, Math.abs(a.y - b.y) * H);
+  ctx.setLineDash([]);
+}
+
+// ---------------------------------------------------------------- speech (§7)
+const lines = [];          // queue: {line_id, text, audio, at, blob, spoken}
+const audioById = new Map();
+let current = null, player = new Audio();
+
+function onSay(m) {
+  if (!prefs.voice_out) { send({ type: "played", line_id: m.line_id, via: "skipped" }); return; }
+  if (m.mode === "replace") stopSpeech(true);
+  lines.push({ ...m, at: Date.now(), done: false });
+  pump();
+}
+function onAudio(h, payload) {
+  const line = lines.find((l) => l.line_id === h.line_id) || (current && current.line_id === h.line_id ? current : null);
+  if (!line || line.fallback) return;     // too late: browser TTS already took this line
+  line.blob = new Blob([payload], { type: h.mime });
+  pump();
+}
+function stopSpeech(clearQueue) {
+  if (current) send({ type: "played", line_id: current.line_id, via: "skipped" });
+  current = null; player.pause(); speechSynthesis.cancel();
+  if (clearQueue) { for (const l of lines) send({ type: "played", line_id: l.line_id, via: "skipped" }); lines.length = 0; }
+}
+function finish(line, via) {
+  if (current !== line) return;
+  current = null; send({ type: "played", line_id: line.line_id, via }); pump();
+}
+function pump() {
+  if (current || !lines.length) return;
+  const line = lines[0];
+  const browserOnly = line.audio === "none" || prefs.tts === "browser" || (health && !health.tts_ready);
+  if (line.blob) {
+    lines.shift(); current = line;
+    player.src = URL.createObjectURL(line.blob);
+    player.onended = () => finish(line, "server");
+    player.onerror = () => { line.blob = null; speak(line); };
+    player.play().catch(() => speak(line));
+    return;
+  }
+  const waited = Date.now() - line.at, waitMs = limits ? limits.tts_wait_ms : 1500;
+  if (browserOnly || waited >= waitMs) { lines.shift(); current = line; speak(line); return; }
+  setTimeout(pump, waitMs - waited + 5);
+}
+function speak(line) {
+  line.fallback = true;
+  const u = new SpeechSynthesisUtterance(line.text);
+  u.lang = "ko-KR";
+  u.onend = u.onerror = () => finish(line, "browser");
+  speechSynthesis.speak(u);
+}
+
+// ---------------------------------------------------------------- §15 Plan 모드
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const splitList = (v) => v.split(",").map((x) => x.trim()).filter(Boolean);
+
+function renderLimits() {
+  $("planLimits").textContent = limits
+    ? `계획 단계 ≤ ${limits.plan_steps_max} · 자료 ≤ ${limits.materials_max}개 · 자료당 ≤ ${limits.material_text_max_chars}자 · ` +
+      `참고 사진 ≤ ${limits.reference_images_max != null ? limits.reference_images_max : REF_MAX}장`
+    : "Plan 모드 상한: 연결 후 표시";
+  buildMaterials();
+}
+
+function buildMaterials() {
+  const n = (limits && limits.materials_max) || 4;
+  const box = $("materialRows");
+  if (box.childElementCount === n) return;
+  box.textContent = "";
+  for (let i = 0; i < n; i++) {
+    const row = document.createElement("div");
+    row.className = "mrow";
+    row.innerHTML = `<div class="row">` +
+      `<input type="text" class="mTitle" maxlength="80" placeholder="자료 ${i + 1} 제목">` +
+      `<input type="text" class="mVersion" maxlength="32" placeholder="버전(선택)">` +
+      `<input type="file" class="mFile" accept=".txt,.md,text/plain,text/markdown"></div>` +
+      `<textarea class="mText" rows="2" placeholder="자료 내용을 붙여넣기 (텍스트만 전송, 파일은 읽기만)"></textarea>`;
+    box.appendChild(row);
+    row.querySelector(".mText").maxLength = (limits && limits.material_text_max_chars) || 4000;
+    row.querySelector(".mFile").addEventListener("change", (e) => readMaterialFile(e.target));
+  }
+}
+
+function readMaterialFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const row = input.closest(".mrow");
+  const fr = new FileReader();
+  fr.onload = () => {
+    const text = String(fr.result || "");
+    const limit = (limits && limits.material_text_max_chars) || 4000;
+    row.querySelector(".mText").value = text.slice(0, limit);
+    const title = row.querySelector(".mTitle");
+    if (!title.value.trim()) title.value = file.name.replace(/\.[^.]+$/, "").slice(0, 80);
+    log(`자료 읽음: ${file.name} (${text.length}자${text.length > limit ? ` → ${limit}자로 자름` : ""})`);
+  };
+  fr.onerror = () => log("자료 읽기 실패: " + file.name);
+  fr.readAsText(file);
+}
+
+function collectMaterials() {
+  const out = [];
+  for (const row of document.querySelectorAll("#materialRows .mrow")) {
+    const text = row.querySelector(".mText").value;
+    if (!text.trim()) continue;
+    const title = row.querySelector(".mTitle").value.trim();
+    if (!title) { log("자료 제목을 입력하세요"); return null; }
+    const version = row.querySelector(".mVersion").value.trim();
+    const m = { title, text };
+    if (version) m.version = version;
+    out.push(m);
+  }
+  return out;
+}
+
+function curReviewStep() {
+  const p = state && state.plan;
+  return (p && p.steps.find((s) => s.id === selectedStepId)) || null;
+}
+function curRunStep() {
+  const p = state && state.plan;
+  return (p && state.phase === "running" && p.steps[state.step_index]) || null;
+}
+
+function fillEditor() {
+  const s = curReviewStep();
+  if (!s) return;
+  $("peSay").value = s.say; $("peDone").value = s.done_when; $("peCheck").value = s.check;
+  $("peRequired").checked = s.required;
+  $("peGoalRequired").checked = s.goal_required !== false;
+  $("peConditionKind").value = s.condition_kind || "state";
+  $("peRequires").value = s.requires.join(", ");
+  $("peTargets").value = s.targets.join(", ");
+}
+
+function renderPlan() {
+  const inReview = !!(state && state.phase === "reviewing" && state.plan);
+  $("reviewPanel").hidden = !inReview;
+  if (!inReview) return;
+  const p = state.plan;
+  $("planMeta").textContent =
+    `${p.status === "draft" ? "초안 · 승인 전" : "승인됨"} · revision ${p.revision}` +
+    (p.approved_revision != null ? ` · approved ${p.approved_revision}` : "") +
+    ` · target ${p.target} · goal_when ${p.goal_when}`;
+  const matTitle = (id) => { const m = p.materials.find((x) => x.id === id); return m ? m.title : id; };
+  $("planMaterials").textContent = p.materials.length
+    ? "자료: " + p.materials.map((m) => `${m.id} ${m.title}${m.version ? " (" + m.version + ")" : ""} ${m.chars}자`).join(" · ")
+    : "자료 없음";
+  if (!selectedStepId || !p.steps.some((s) => s.id === selectedStepId)) selectedStepId = p.steps[0].id;
+  const list = $("planList"); list.textContent = "";
+  p.steps.forEach((s) => {
+    const ev = s.evidence
+      ? ` · 근거 ${matTitle(s.evidence.material_id)}${s.evidence.version ? " " + s.evidence.version : ""}` +
+        `${s.evidence.locator ? " @" + s.evidence.locator : ""}`
+      : "";
+    const row = document.createElement("div");
+    row.className = "pstep" + (s.id === selectedStepId ? " sel" : "");
+    row.innerHTML = `<div class="row"><b>${esc(s.id)}</b>${s.required ? ' <span class="mark">절차 확인 필수</span>' : ""}` +
+      `<span>${s.goal_required !== false ? "목표 필수" : s.required ? "안전·선행조건" : "선택"}</span>` +
+      `<span class="muted">check=${esc(s.check)} · ${s.condition_kind === "event" ? "과거 발생" : "현재 유지"} ` +
+      `${s.requires.length ? " · requires=" + esc(s.requires.join(",")) : ""}` +
+      `${s.targets.length ? " · targets=" + esc(s.targets.join(",")) : ""}${esc(ev)}</span></div>` +
+      `<div>${esc(s.say)}</div>` +
+      (s.details ? `<div class="sdetails">${esc(s.details)}</div>` : "") +
+      `<div class="muted">done_when: ${esc(s.done_when)}</div>`;
+    row.onclick = () => { selectedStepId = s.id; renderPlan(); };
+    list.appendChild(row);
+  });
+  renderSources($("planSources"), researchSources());
+  fillEditor();
+}
+
+function proposalText(pr) {
+  const sig = (s) => [s.say, s.details || "", s.done_when, s.check, s.required, s.goal_required !== false, s.condition_kind || "state", s.requires.join(","), s.targets.join(",")].join("|");
+  const cur = state.plan ? state.plan.steps : [];
+  const curIds = cur.map((s) => s.id), nextIds = pr.steps.map((s) => s.id);
+  const byId = Object.fromEntries(cur.map((s) => [s.id, sig(s)]));
+  const added = nextIds.filter((id) => !curIds.includes(id));
+  const removed = curIds.filter((id) => !nextIds.includes(id));
+  const changed = pr.steps.filter((s) => byId[s.id] !== undefined && byId[s.id] !== sig(s)).map((s) => s.id);
+  const bits = [];
+  if (added.length) bits.push("추가 " + added.join(","));
+  if (removed.length) bits.push("삭제 " + removed.join(","));
+  if (changed.length) bits.push("변경 " + changed.join(","));
+  return `변경 제안: ${pr.reason} · revision ${pr.revision}${bits.length ? " · " + bits.join(" · ") : ""}`;
+}
+
+function renderRun() {
+  const running = !!(state && state.phase === "running" && state.plan);
+  $("runPanel").hidden = !running;
+  if (running) {
+    const step = curRunStep();
+    $("pause").disabled = state.paused;
+    $("resume").disabled = !state.paused;
+    const manual = step && (step.check !== "visual" || (state.core_mode === "graph" && step.required));
+    $("ackStep").disabled = !manual || state.paused;
+    $("ackStep").title = !manual ? "화면 확인 단계라 사용자 확인이 필요 없습니다" : "";
+    $("runMeta").textContent = `단계 ${state.step_index + 1}/${state.plan.steps.length} · ` +
+      (step ? step.id + " " + step.say : "") + ` · 모델 ${PLAN_MODELS[runPlanModel] || "알 수 없음"} · 코어 ${state.core_mode || "알 수 없음"}` +
+      (state.paused ? " · 일시정지됨" : "");
+  }
+  const graph = state && state.core_mode === "graph";
+  $("graphStatus").hidden = !graph || !state.plan;
+  if (graph && state.plan) $("graphStatus").textContent =
+    `확인 완료: ${(state.steps_done || []).join(", ") || "없음"} · 행동 가능: ${(state.steps_ready || []).join(", ") || "없음"}`;
+  const pending = (state && state.pending_required_checks) || [];
+  $("pendingChecks").hidden = pending.length === 0;
+  $("pendingChecks").textContent = `${state && ["confirmed", "user_confirmed"].includes(state.completion) ? "목표 달성 확인 · " : ""}절차 이행 미확인: ${pending.join(", ")}. 안전 확인 완료를 뜻하지 않습니다.`;
+  const b = state && state.blocked;
+  $("blockedBanner").hidden = !b;
+  if (b) $("blockedBanner").textContent = `진행 막힘 (${b.step_id}): ${b.reason}` +
+    (b.requires.length ? ` · 먼저 끝내야: ${b.requires.join(", ")}` : "");
+  const pr = state && state.proposal;
+  $("proposalBanner").hidden = !pr;
+  if (pr) $("proposalText").textContent = proposalText(pr);
+}
+
+function moveStep(delta) {
+  const p = state && state.plan;
+  if (!p) return;
+  const ids = p.steps.map((s) => s.id);
+  const i = ids.indexOf(selectedStepId), j = i + delta;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  [ids[i], ids[j]] = [ids[j], ids[i]];
+  send({ type: "plan_edit", order: ids });
+}
+
+// ---------------------------------------------------------------- 참고 사진 (현재 카메라 프레임과 별개)
+function refMsg(text) { $("refMsg").textContent = text || ""; }
+
+function clearReferences(reason) {
+  referenceEpoch++;
+  if (!referenceImages.length) { renderRefs(); return; }
+  for (const r of referenceImages) if (r.url) URL.revokeObjectURL(r.url);
+  referenceImages = [];
+  renderRefs();
+  if (reason) log(`참고 사진 비움 (${reason})`);
+}
+
+// 전송용 완전한 현재 참고 사진 집합. base64는 여기서만 쓰이고 DOM·로그·state에 넣지 않는다.
+function referencePayload() {
+  return referenceImages.map((r) => {
+    const out = { frame_id: r.frame_id, image_base64: r.image_base64 };
+    if (r.label) out.label = r.label;
+    return out;
+  });
+}
+
+function renderRefs() {
+  const box = $("refList");
+  box.textContent = "";
+  referenceImages.forEach((r, i) => {
+    const item = document.createElement("div");
+    item.className = "refItem";
+    const img = document.createElement("img");
+    img.src = r.url; img.alt = `참고 사진 ${i + 1} 미리보기`;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = `${i + 1}번 · ${r.w}×${r.h} · ${Math.round(r.bytes / 1024)}KB`;
+    const label = document.createElement("input");
+    label.type = "text"; label.maxLength = 60; label.value = r.label || ""; label.placeholder = "설명(선택)";
+    label.setAttribute("aria-label", `참고 사진 ${i + 1} 설명`);
+    label.oninput = () => { r.label = label.value.trim() || null; };
+    const del = document.createElement("button");
+    del.type = "button"; del.textContent = "빼기"; del.setAttribute("aria-label", `참고 사진 ${i + 1} 빼기`);
+    del.onclick = () => { if (r.url) URL.revokeObjectURL(r.url); referenceImages.splice(i, 1); renderRefs(); };
+    item.append(img, meta, label, del);
+    box.appendChild(item);
+  });
+  $("refCount").textContent = `${referenceImages.length}/${REF_MAX}장`;
+  $("refAdd").disabled = referenceBusy || referenceImages.length >= REF_MAX;
+  refreshButtons();
+  renderClarify();   // 질문 패널의 참고 사진 안내·버튼 상태를 함께 갱신 (입력값은 건드리지 않음)
+}
+
+function loadImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => resolve({ img, url });
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("이미지 해석 실패")); };
+    img.src = url;
+  });
+}
+function canvasToJpeg(canvas, q) {
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("JPEG 변환 실패"))), "image/jpeg", q));
+}
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => { const s = String(fr.result || ""), i = s.indexOf(","); resolve(i >= 0 ? s.slice(i + 1) : ""); };
+    fr.onerror = () => reject(new Error("읽기 실패"));
+    fr.readAsDataURL(blob);
+  });
+}
+
+// 브라우저에서만: 원본 비율 유지. 긴 변 ≤1600 선호, 엔진 규격(가로 ≥320·세로 ≥240, 한 변 ≤2048,
+// 픽셀 ≤2,073,600)을 반드시 만족하도록 맞추고 JPEG 1.5MB 이하로 압축한다.
+function referenceSize(iw, ih) {
+  const longSide = Math.max(iw, ih);
+  let s = Math.min(1, REF_LONG_SIDE / longSide, Math.sqrt(REF_MAX_PIXELS / (iw * ih)));
+  let w = Math.max(1, Math.round(iw * s)), h = Math.max(1, Math.round(ih * s));
+  if (w < REF_MIN_W || h < REF_MIN_H) {                 // 최소 규격 미달 → 최소가 되도록 다시 계산
+    s = Math.max(REF_MIN_W / iw, REF_MIN_H / ih);
+    w = Math.max(1, Math.round(iw * s)); h = Math.max(1, Math.round(ih * s));
+  }
+  if (w > REF_MAX_SIDE || h > REF_MAX_SIDE || w * h > REF_MAX_PIXELS) {   // 상한 초과 → 줄인다
+    s = Math.min(s, REF_LONG_SIDE / longSide, Math.sqrt(REF_MAX_PIXELS / (iw * ih)));
+    w = Math.max(1, Math.floor(iw * s)); h = Math.max(1, Math.floor(ih * s));
+  }
+  if (w < REF_MIN_W || h < REF_MIN_H || w > REF_MAX_SIDE || h > REF_MAX_SIDE || w * h > REF_MAX_PIXELS)
+    throw new Error(`규격에 맞출 수 없는 사진입니다(${iw}×${ih})`);
+  return { w, h };
+}
+
+async function prepareReference(file) {
+  const { img, url } = await loadImageFile(file);
+  try {
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    if (!iw || !ih) throw new Error("크기를 읽지 못했습니다");
+    const { w, h } = referenceSize(iw, ih);
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    c.getContext("2d").drawImage(img, 0, 0, w, h);
+    let blob = await canvasToJpeg(c, 0.85);
+    for (let q = 0.75; blob.size > REF_MAX_BYTES && q >= 0.35; q -= 0.1) blob = await canvasToJpeg(c, q);
+    if (blob.size > REF_MAX_BYTES) throw new Error("1.5MB 이하로 줄이지 못했습니다");
+    const image_base64 = await blobToBase64(blob);
+    if (!image_base64) throw new Error("변환 결과가 비었습니다");
+    return { frame_id: `ref-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      image_base64, label: null, bytes: blob.size, w, h, url: URL.createObjectURL(blob), name: file.name || "photo" };
+  } finally { URL.revokeObjectURL(url); }
+}
+
+async function addReferenceFiles(files) {
+  if (referenceBusy) return;
+  const epoch = referenceEpoch;
+  referenceBusy = true;
+  refMsg("사진을 준비하고 있습니다. 준비가 끝나면 보낼 수 있어요.");
+  renderRefs();
+  let total = referenceImages.reduce((n, r) => n + r.image_base64.length, 0);
+  let failed = false;
+  try {
+    for (const file of Array.from(files || [])) {
+      if (epoch !== referenceEpoch) break;
+      if (referenceImages.length >= REF_MAX) { failed = true; refMsg(`참고 사진은 최대 ${REF_MAX}장입니다.`); break; }
+      if (!file.type || !file.type.startsWith("image/")) { failed = true; refMsg(`이미지 파일이 아닙니다: ${file.name}`); continue; }
+      try {
+        const item = await prepareReference(file);
+        if (epoch !== referenceEpoch) { URL.revokeObjectURL(item.url); break; }
+        if (total + item.image_base64.length > REF_ENVELOPE_BYTES) {
+          URL.revokeObjectURL(item.url); failed = true;
+          refMsg("참고 사진 합계가 너무 커서 더 넣지 않았습니다. 카메라 화면과 자료를 함께 보낼 공간이 필요해요. 불필요한 사진을 빼고 다시 추가해 주세요."); break;
+        }
+        total += item.image_base64.length;
+        referenceImages.push(item);
+        log(`참고 사진 준비: ${file.name} → ${item.w}×${item.h} ${Math.round(item.bytes / 1024)}KB (base64는 표시하지 않음)`);
+      } catch (e) {
+        failed = true; refMsg(`사진 처리 실패(${file.name}): ${e.message || e}`); log(`참고 사진 실패: ${file.name}`);
+      }
+    }
+  } finally {
+    referenceBusy = false;
+    $("refFile").value = "";
+    if (epoch !== referenceEpoch) refMsg("사진 선택이 취소되었습니다.");
+    else if (!failed) refMsg(`참고 사진 ${referenceImages.length}장 준비됨 · 현재 카메라 화면과 별개입니다.`);
+    renderRefs();
+  }
+}
+
+// 엔진이 보내는 확인 질문 관련 오류 코드 (contracts.py ERROR_CODES)
+const CLARIFY_ERRORS = {
+  no_clarification: "지금은 답할 질문이 없습니다. 화면의 최신 상태를 확인하세요.",
+  clarification_stale: "이미 지난 질문에 대한 답변입니다. 화면에 보이는 질문에 다시 답해 주세요.",
+  invalid_image: "참고 사진을 읽지 못했습니다. JPEG 사진으로 다시 시도해 주세요.",
+  image_too_large: "참고 사진이 너무 큽니다(JPEG 1.5MB 이하). 더 작은 사진을 써 주세요.",
+};
+
+// ---------------------------------------------------------------- 계획 확인 질문 (§확인 질문)
+function setClarifyStatus(text, isError) {
+  const el = $("clarifyStatus");
+  el.textContent = text || "";
+  el.style.color = isError ? "var(--warn)" : "var(--muted)";
+}
+
+function renderClarify() {
+  const s = state;
+  const on = !!(s && s.phase === "clarifying");
+  const waiting = !!(s && s.phase === "planning" && clarifySubmitted);
+  const failed = on && s.notice && s.notice.code === "plan_answer_failed";
+  const key = on ? (s.clarification_id || s.clarification || "clarify") : clarifyKey;
+  const wasOn = clarifyShown;
+  if (failed && key !== clarifyKey) {
+    clarifyPending = false; clarifySubmitted = false; clarifyError = s.notice.text;
+  } else if (!waiting && clarifyShown && (!on || key !== clarifyKey)) {
+    if (clarifySubmitted) clarifySentCount++;
+    clarifySubmitted = false; clarifyPending = false; clarifyError = "";
+    $("clarifyAnswer").value = "";
+  }
+  const appeared = on && !clarifyShown;
+  clarifyKey = key; clarifyShown = on || waiting;
+  const closedNotice = !on && !waiting && wasOn && s && s.phase === "idle" && s.notice && s.notice.text;
+  $("clarifyPanel").hidden = !(on || waiting || closedNotice);
+  $("clarifyHead").textContent = waiting ? "답변을 확인하고 있어요" : on ? "확인 질문" : "질문 종료";
+  $("clarifyInput").hidden = !(on || waiting);
+  if (waiting) {
+    $("clarifyAnswer").disabled = true;
+    $("clarifySend").disabled = $("clarifyUnsure").disabled = $("clarifyRefAdd").disabled = true;
+    setClarifyStatus("답변과 사진을 확인하고 있습니다. 입력한 내용은 보관됩니다.", false);
+    return;
+  }
+  if (!on) {
+    if (closedNotice) {
+      $("clarifyQ").textContent = s.notice.text;
+      $("clarifyId").textContent = "";
+      $("clarifyCount").textContent = clarifySentCount ? `답변 ${clarifySentCount}/12` : "";
+      setClarifyStatus("더 물어볼 질문이 없습니다. 위 안내를 확인하세요.", false);
+    }
+    return;
+  }
+  $("clarifyQ").textContent = s.clarification || "질문을 기다리는 중…";
+  $("clarifyId").textContent = s.clarification_id ? `id ${s.clarification_id}` : "";
+  $("clarifyCount").textContent = `질문 ${Math.min(clarifySentCount + 1, 12)} · 답변 ${clarifySentCount}/12`;
+  $("clarifySend").disabled = clarifyPending || referenceBusy;
+  $("clarifyUnsure").disabled = clarifyPending || referenceBusy;
+  $("clarifyRefAdd").disabled = clarifyPending || referenceBusy || referenceImages.length >= REF_MAX;
+  $("clarifyAnswer").disabled = clarifyPending;
+  $("clarifySend").textContent = clarifyPending ? "보내는 중…" : "답변 보내기";
+  $("clarifyRefInfo").textContent = referenceImages.length
+    ? `참고 사진 ${referenceImages.length}장이 이 답변과 함께 전송됩니다 (현재 카메라 화면과 별개).`
+    : "참고 사진 없음 · 필요할 때만 '참고 사진 추가'로 고르세요.";
+  if (clarifyPending) setClarifyStatus("보내는 중… 답변을 다시 보내지 마세요.", false);
+  else if (referenceBusy) setClarifyStatus("사진을 준비하고 있습니다. 준비가 끝나면 보낼 수 있어요.", false);
+  else if (clarifyError) setClarifyStatus(clarifyError + " 입력한 내용은 그대로 남아 있습니다. 다시 보내 주세요.", true);
+  else setClarifyStatus("답변을 입력하고 '답변 보내기'를 누르세요. 잘 모르면 '모르겠어요'도 됩니다.", false);
+  if (appeared) $("clarifyAnswer").focus();
+}
+
+function submitAnswer(raw) {
+  if (clarifyPending || referenceBusy) return;                 // 중복 전송·사진 누락 방지
+  const s = state;
+  if (!s || s.phase !== "clarifying") { setClarifyStatus("지금은 답변할 질문이 없습니다.", true); return; }
+  if (!s.clarification_id) { setClarifyStatus("서버가 아직 질문 id를 보내지 않았습니다. 잠시 후 다시 시도하세요.", true); return; }
+  if (!ws || ws.readyState !== 1) { setClarifyStatus("연결이 끊겨 보낼 수 없습니다. 연결을 확인한 뒤 다시 보내세요.", true); return; }
+  const answer = String(raw == null ? $("clarifyAnswer").value : raw).trim();
+  if (!answer) { setClarifyStatus("답변을 입력하세요.", true); $("clarifyAnswer").focus(); return; }
+  if (answer.length > 1000) { setClarifyStatus("답변은 1000자까지입니다.", true); return; }
+  $("clarifyAnswer").value = answer;
+  clarifyPending = true; clarifyError = ""; clarifySubmitted = true;
+  renderClarify();
+  send({ type: "plan_answer", clarification_id: s.clarification_id, answer, reference_images: referencePayload() });
+  log(`확인 답변 전송 (${answer.length}자 · 참고 사진 ${referenceImages.length}장)`);
+}
+
+// ---------------------------------------------------------------- 출처 · 단계 설명
+function safeHttpUrl(u) {
+  try {
+    const x = new URL(String(u), location.href);
+    return x.protocol === "http:" || x.protocol === "https:" ? x.href : null;
+  } catch (e) { return null; }
+}
+function researchSources() {
+  if (!state) return [];
+  const fromPlan = state.plan && Array.isArray(state.plan.research_sources) ? state.plan.research_sources : null;
+  const list = (fromPlan && fromPlan.length) ? fromPlan : (Array.isArray(state.research_sources) ? state.research_sources : []);
+  return list.slice(0, 6);
+}
+function renderSources(el, sources) {
+  el.textContent = "";
+  if (!sources || !sources.length) { el.hidden = true; return; }
+  el.hidden = false;
+  const head = document.createElement("span");
+  head.className = "muted";
+  head.textContent = `확인된 출처 ${sources.length}개 (참고용 · 실행 지시 아님): `;
+  el.appendChild(head);
+  sources.forEach((s, i) => {
+    if (i) el.appendChild(document.createTextNode(" · "));
+    const title = s && s.title ? String(s.title) : "(제목 없음)";
+    const href = s ? safeHttpUrl(s.url) : null;
+    if (!href) { const sp = document.createElement("span"); sp.textContent = title; el.appendChild(sp); return; }
+    const a = document.createElement("a");
+    a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = title;
+    if (s.summary) a.title = String(s.summary).slice(0, 300);
+    el.appendChild(a);
+  });
+}
+function renderStepDetails() {
+  const el = $("stepDetails");
+  const p = state && state.plan;
+  const step = p && p.steps[state.step_index] ? p.steps[state.step_index] : null;
+  // 그래프 코어: 행동 가능(steps_ready)한 단계에만 실행 중 설명을 보여 준다. 검토 화면은 초안 전체를 보여 준다.
+  const eligible = !state || state.core_mode !== "graph" || (state.steps_ready || []).includes(step && step.id);
+  const d = step && step.details && eligible ? String(step.details).trim() : "";
+  el.hidden = !d;
+  el.textContent = d;
+}
+
+// ---------------------------------------------------------------- buttons
+$("connect").onclick = () => connect().catch((e) => log("연결 실패: " + e));
+$("disconnect").onclick = () => endSession();
+$("planMode").onchange = () => {
+  const on = $("planMode").checked;
+  $("materialsPanel").hidden = !on;
+  $("refPanel").hidden = !on;          // 참고 사진은 Plan 모드에서만 노출
+  $("searchNote").hidden = !on;
+};
+$("planModel").onchange = refreshButtons;
+$("coreMode").onchange = refreshButtons;
+$("start").onclick = () => {
+  if ($("start").disabled || !ws || ws.readyState !== 1) return;
+  if (!$("consent").checked) { log("동의 체크가 필요합니다"); return; }
+  const goal = $("goal").value.trim();
+  if (!goal) { log("목표를 입력하세요"); return; }
+  const msg = { type: "start", goal, context: "", consent_ai: true,
+    plan_model: $("planModel").value, core_mode: $("coreMode").value };
+  if ($("planMode").checked) {
+    msg.plan_mode = true;
+    const materials = collectMaterials();
+    if (materials === null) return;
+    if (materials.length) msg.materials = materials;
+    const refs = referencePayload();
+    if (refs.length) msg.reference_images = refs;   // 완전한 현재 참고 사진 집합(현재 카메라 프레임과 별개)
+  }
+  clarifySentCount = 0; clarifySubmitted = false; clarifyPending = false; clarifyError = "";
+  clarifyKey = null; clarifyShown = false;
+  runPlanModel = msg.plan_model; startPending = true; refreshButtons();
+  send(msg);
+  if (referenceImages.length) log(`가이드 시작 · 참고 사진 ${referenceImages.length}장 포함`);
+};
+
+$("peSave").onclick = () => {
+  const s = curReviewStep();
+  if (!s) return;
+  const edit = { step_id: s.id };
+  const say = $("peSay").value.trim(), done = $("peDone").value.trim();
+  const check = $("peCheck").value, required = $("peRequired").checked;
+  const requires = splitList($("peRequires").value), targets = splitList($("peTargets").value);
+  if (say && say !== s.say) edit.say = say;
+  if (done && done !== s.done_when) edit.done_when = done;
+  if (check !== s.check) edit.check = check;
+  if (required !== s.required) edit.required = required;
+  if ($("peGoalRequired").checked !== (s.goal_required !== false)) edit.goal_required = $("peGoalRequired").checked;
+  if ($("peConditionKind").value !== (s.condition_kind || "state")) edit.condition_kind = $("peConditionKind").value;
+  if (requires.join(",") !== s.requires.join(",")) edit.requires = requires;
+  if (targets.join(",") !== s.targets.join(",")) edit.targets = targets;
+  if (Object.keys(edit).length === 1) { log("바뀐 내용이 없습니다"); return; }
+  send({ type: "plan_edit", edits: [edit] });
+};
+$("peAdd").onclick = () => {
+  const say = $("peSay").value.trim(), done = $("peDone").value.trim();
+  if (!say || !done) { log("단계 추가에는 say와 done_when이 필요합니다"); return; }
+  send({ type: "plan_edit", add: [{ say, done_when: done, check: $("peCheck").value,
+    required: $("peRequired").checked, goal_required: $("peGoalRequired").checked,
+    condition_kind: $("peConditionKind").value, requires: splitList($("peRequires").value),
+    targets: splitList($("peTargets").value) }] });
+};
+$("peRemove").onclick = () => { if (selectedStepId) send({ type: "plan_edit", remove: [selectedStepId] }); };
+$("peUp").onclick = () => moveStep(-1);
+$("peDown").onclick = () => moveStep(1);
+$("planApprove").onclick = () => send({ type: "plan_approve" });
+$("planDiscard").onclick = () => send({ type: "plan_discard" });
+$("pause").onclick = () => send({ type: "run_pause" });
+$("resume").onclick = () => send({ type: "run_resume" });
+$("ackStep").onclick = () => { const step = curRunStep(); if (step) send({ type: "step_ack", step_id: step.id }); };
+$("proposalAccept").onclick = () => send({ type: "proposal_accept" });
+$("proposalReject").onclick = () => send({ type: "proposal_reject" });
+$("stop").onclick = () => { clearReferences("작업 중지"); send({ type: "stop" }); };
+$("follow").onclick = () => send({ type: "follow_now" });
+$("replan").onclick = () => send({ type: "replan_now" });
+$("confirm").onclick = () => send({ type: "confirm_done" });
+$("talkSend").onclick = () => {
+  const u = $("talk").value.trim();
+  if (u) { send({ type: "talk", utterance: u }); $("talk").value = ""; }
+};
+$("talk").addEventListener("keydown", (e) => { if (e.key === "Enter" && !$("talkSend").disabled) $("talkSend").click(); });
+$("consent").onchange = () => { if (!$("consent").checked && sess) { log("동의 철회: 세션 종료"); endSession(); } };
+for (const id of ["voiceOut", "serverTts", "visuals"]) $(id).onchange = sendPrefs;
+
+// 참고 사진 · 확인 질문
+$("refAdd").onclick = () => $("refFile").click();
+$("clarifyRefAdd").onclick = () => $("refFile").click();
+$("refFile").onchange = (e) => { addReferenceFiles(e.target.files).catch((err) => log("참고 사진 처리 오류: " + err)); };
+$("refClear").onclick = () => { clearReferences("사용자가 지움"); refMsg(""); };
+$("clarifySend").onclick = () => submitAnswer(null);
+$("clarifyUnsure").onclick = () => submitAnswer("모르겠어요");
+$("clarifyAnswer").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submitAnswer(null); }
+});
+// 새 목표 = 새 작업: 대기 상태에서 목표를 바꾸면 이전 참고 사진을 폐기한다(작업 중에는 건드리지 않음).
+$("goal").addEventListener("input", () => {
+  const phase = state ? state.phase : "idle";
+  if (!["idle", "completed", "error"].includes(phase)) return;
+  if (referenceImages.length || referenceBusy) clearReferences("새 목표 입력");
+});
+
+loadHealth();
+renderRefs();
+refreshButtons();
+</script>
+</body>
+</html>

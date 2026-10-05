@@ -1,0 +1,42 @@
+# Private inputs and local credentials
+*.hwp
+.env
+.env.*
+!.env.example
+API_KEY
+API_KEY.txt
+
+# Installed dependencies and generated artifacts
+node_modules/
+dist/
+.venv*/
+
+# Python caches and metadata
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# e2e harness outputs
+tools/e2e/runs/
+tools/e2e/budget.json
+tools/e2e/clips/
+*.y4m
+
+# Local GPU models, private captures and credentials stay outside Git
+models/
+weights/
+.secrets/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.gguf
+*.onnx
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+.DS_Store
+*[Oo]mni[Vv]oice*

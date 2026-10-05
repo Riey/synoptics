@@ -1,0 +1,21 @@
+{
+  "name": "visual-coach-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "web"
+  ],
+  "scripts": {
+    "contracts": "uv run python scripts/export_contracts.py && node scripts/generate_contracts_ts.mjs",
+    "dev:web": "npm --workspace=web run dev -- --host 127.0.0.1",
+    "test:core": "npm --workspace=packages/visual-tools test",
+    "build": "npm run build --workspaces",
+    "test:web": "node --test web/src"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^15.0.4",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "name": "backend-and-data",
+    "returncode": 0,
+    "seconds": 6.182,
+    "command": [
+      "network-blocked pytest",
+      "backend/tests",
+      "tools/clef_ft/tests/test_build_data.py",
+      "-q"
+    ]
+  },
+  {
+    "name": "live",
+    "returncode": 0,
+    "seconds": 12.604,
+    "command": [
+      "network-blocked pytest",
+      "tests",
+      "-q"
+    ]
+  },
+  {
+    "name": "contracts",
+    "returncode": 0,
+    "seconds": 0.391,
+    "command": [
+      "npm",
+      "run",
+      "contracts"
+    ]
+  },
+  {
+    "name": "build",
+    "returncode": 0,
+    "seconds": 2.567,
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ]
+  },
+  {
+    "name": "web",
+    "returncode": 0,
+    "seconds": 0.738,
+    "command": [
+      "npm",
+      "run",
+      "test:web"
+    ]
+  },
+  {
+    "name": "renderer",
+    "returncode": 0,
+    "seconds": 0.219,
+    "command": [
+      "npm",
+      "run",
+      "test:core"
+    ]
+  }
+]

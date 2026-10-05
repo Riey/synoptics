@@ -1,0 +1,8 @@
+{
+  "live_tts_ready": false,
+  "live_tts_voice": null,
+  "backend_tts_enabled": false,
+  "external_network_calls": 0,
+  "voice_environment_overrides": "none; tested code defaults",
+  "scope": "public health/config APIs; not an audible playback test"
+}
